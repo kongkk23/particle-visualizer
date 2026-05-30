@@ -521,6 +521,9 @@ function initHandTracking(){
       showWebcamError('浏览器不支持摄像头');
       return;
     }
+    // 先释放旧的摄像头流，防止刷新后摄像头被占用
+    if(mpVideoStream){mpVideoStream.getTracks().forEach(function(t){t.stop();});mpVideoStream=null;}
+    if(videoEl.srcObject){videoEl.srcObject.getTracks().forEach(function(t){t.stop();});videoEl.srcObject=null;}
     navigator.mediaDevices.getUserMedia({video:{width:{ideal:640},height:{ideal:480},facingMode:'user'}})
       .then(function(stream){
         mpVideoStream=stream;
@@ -732,6 +735,10 @@ function init(){
   initWebcamDrag();
 
   window.addEventListener('resize',onResize);
+  // 页面关闭/刷新时释放摄像头，防止下次打开被占用
+  window.addEventListener('beforeunload',function(){
+    if(mpVideoStream){mpVideoStream.getTracks().forEach(function(t){t.stop();});}
+  });
   document.getElementById('fullscreen-btn').addEventListener('click',toggleFullscreen);
   document.getElementById('screenshot-btn').addEventListener('click',takeScreenshot);
 
