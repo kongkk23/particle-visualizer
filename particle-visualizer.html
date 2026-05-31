@@ -69,9 +69,9 @@ var CONFIG={
   MOUSE_ROTATION_SPEED:0.002,MOUSE_WHEEL_SPEED:0.04,
   SCALE_MIN:0.5,SCALE_MAX:3.0,
   // Bloom 只做柔边，不负责亮度
-  BLOOM_THRESHOLD:0.65,BLOOM_STRENGTH:0.4,BLOOM_RADIUS:0.4,
+  BLOOM_THRESHOLD:0.7,BLOOM_STRENGTH:0.25,BLOOM_RADIUS:0.3,
   TRANSITION_DURATION:1500,
-  BASE_COLOR:'#ff6b9d',PARTICLE_OPACITY:0.55,
+  BASE_COLOR:'#ff6b9d',PARTICLE_OPACITY:0.3,
   BREATHING_AMPLITUDE:0.08,BREATHING_SPEED:0.3,
   BG_TWINKLE_SPEED:0.8,AUTO_ROTATE_SPEED:0.06,
   NEBULA_LAYERS:2,PERF_LOW_FPS:25,PERF_CHECK_FRAMES:60,
@@ -317,13 +317,13 @@ function makeShader(PS,PO,brightnessMul,glowBoost){
       '  vec3 c=mix(warm,rose,drift*.6);',
       '  c=mix(c,lav,smoothstep(.6,1.,vDist));',
       '  c=mix(c,vec3(1.,.96,.93),vDist<.3?.3*(1.-vDist/.3):0.);',
-      '  float brightness=(1.3-vDist*.4)*vBright'+(brightnessMul?'*'+brightnessMul:'')+';',
+      '  float brightness=(1.0-vDist*.3)*vBright'+(brightnessMul?'*'+brightnessMul:'')+';',
       '  c*=brightness;',
-      '  c=pow(c,vec3(0.85));', // 伽马提亮
-      '  c*=(1.5+openness*0.5);', // 手掌张开更亮
+      '  c=pow(c,vec3(0.95));', // 轻微伽马
+      '  c*=(1.0+openness*0.3);', // 轻微亮度联动
       +(glowBoost||'')+
       '  c=clamp(c,0.0,1.8);',
-      '  float breathe=.85+.15*sin(time*vPhase*2.);',
+      '  float breathe=.9+.1*sin(time*vPhase*2.);',
       '  gl_FragColor=vec4(c,tc.a*'+PO+'*vAlpha*breathe);',
       '}'
     ].join('\n'),
@@ -381,7 +381,7 @@ function createParticleSystem(count){
       'void main(){',
       '  vec4 tc=texture2D(particleTexture,gl_PointCoord);if(tc.a<.01)discard;',
       '  vec3 c=vec3(1.0,0.75,0.8);', // 固定玫瑰金
-      '  gl_FragColor=vec4(c,tc.a*0.08*vAlpha);',
+      '  gl_FragColor=vec4(c,tc.a*0.04*vAlpha);',
       '}'
     ].join('\n'),
     transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,
@@ -397,7 +397,7 @@ function createParticleSystem(count){
   cGeo.setAttribute('aSize',new THREE.BufferAttribute(cSizes,1));
   cGeo.setAttribute('aSpeed',new THREE.BufferAttribute(cSpeeds,1));
   cGeo.setAttribute('aBrightness',new THREE.BufferAttribute(cBri,1));
-  coreSystem=new THREE.Points(cGeo,makeShader('1.0','0.7','2.0'));scene.add(coreSystem);
+  coreSystem=new THREE.Points(cGeo,makeShader('0.8','0.4','1.5'));scene.add(coreSystem);
 }
 
 // ===== 背景星星（高亮，不依赖 Bloom）=====
