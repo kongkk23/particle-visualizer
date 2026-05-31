@@ -3,111 +3,85 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>3D 粒子视觉交互系统</title>
+<title>✨ 粒子星空</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{overflow:hidden;background:#000;font-family:'Segoe UI',sans-serif;color:#fff}
+body{overflow:hidden;background:#0d0218;font-family:'Segoe UI',sans-serif;color:#fff}
 #canvas-container{position:fixed;top:0;left:0;width:100%;height:100%}
 #webcam-container{
-  position:fixed;left:16px;bottom:16px;width:220px;height:165px;
-  border-radius:12px;overflow:hidden;border:2px solid rgba(255,255,255,.15);
-  cursor:grab;z-index:100;box-shadow:0 4px 24px rgba(0,0,0,.5);
+  position:fixed;left:16px;bottom:16px;width:200px;height:150px;
+  border-radius:14px;overflow:hidden;border:1.5px solid rgba(255,200,220,.2);
+  cursor:grab;z-index:100;box-shadow:0 4px 30px rgba(255,100,150,.15);
   touch-action:none;min-width:120px;min-height:90px;
 }
 #webcam-container:active{cursor:grabbing}
 #webcam-video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1);display:block}
 #hand-canvas{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;transform:scaleX(-1)}
-#webcam-label{position:absolute;top:6px;left:8px;font-size:11px;color:rgba(255,255,255,.7);text-shadow:0 1px 3px rgba(0,0,0,.8);pointer-events:none}
+#webcam-label{position:absolute;top:6px;left:8px;font-size:11px;color:rgba(255,200,220,.7);text-shadow:0 1px 4px rgba(0,0,0,.8);pointer-events:none}
 #webcam-overlay{
   position:absolute;top:0;left:0;width:100%;height:100%;
   display:flex;align-items:center;justify-content:center;
-  background:rgba(0,0,0,.85);font-size:12px;text-align:center;padding:12px;pointer-events:none;
+  background:rgba(13,2,24,.88);font-size:12px;text-align:center;padding:12px;pointer-events:none;
 }
 #webcam-overlay.hidden{display:none}
 #webcam-overlay .icon{font-size:28px;margin-bottom:6px}
 .ctrl-btn{
   position:fixed;right:16px;width:44px;height:44px;border-radius:50%;
-  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
-  color:#fff;font-size:20px;cursor:pointer;z-index:100;
+  background:rgba(255,200,220,.1);border:1px solid rgba(255,200,220,.15);
+  color:rgba(255,220,230,.8);font-size:20px;cursor:pointer;z-index:100;
   display:flex;align-items:center;justify-content:center;
-  transition:background .2s;backdrop-filter:blur(8px);
+  transition:all .3s;backdrop-filter:blur(8px);
 }
-.ctrl-btn:hover{background:rgba(255,255,255,.25)}
+.ctrl-btn:hover{background:rgba(255,200,220,.2);box-shadow:0 0 20px rgba(255,100,150,.3)}
 #fullscreen-btn{bottom:16px}
 #screenshot-btn{bottom:70px;font-size:18px}
 #status-bar{
   position:fixed;top:16px;left:50%;transform:translateX(-50%);
-  padding:6px 16px;border-radius:20px;background:rgba(0,0,0,.5);
-  backdrop-filter:blur(8px);font-size:12px;color:rgba(255,255,255,.7);
-  z-index:100;pointer-events:none;border:1px solid rgba(255,255,255,.1);white-space:nowrap;
+  padding:6px 18px;border-radius:20px;background:rgba(13,2,24,.6);
+  backdrop-filter:blur(10px);font-size:12px;color:rgba(255,200,220,.6);
+  z-index:100;pointer-events:none;border:1px solid rgba(255,200,220,.08);white-space:nowrap;
 }
 #loading-screen{
   position:fixed;top:0;left:0;width:100%;height:100%;
-  background:#000;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;z-index:9999;transition:opacity .8s;
+  background:#0d0218;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;z-index:9999;transition:opacity 1s;
 }
 #loading-screen.fade-out{opacity:0;pointer-events:none}
-.loader-ring{width:48px;height:48px;border:3px solid rgba(255,255,255,.1);border-top-color:#7af;border-radius:50%;animation:spin 1s linear infinite}
+.loader-ring{width:48px;height:48px;border:3px solid rgba(255,200,220,.1);border-top-color:#ff6b9d;border-radius:50%;animation:spin 1.2s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-#loading-screen p{margin-top:16px;font-size:14px;color:rgba(255,255,255,.5)}
-#load-progress{margin-top:8px;font-size:12px;color:rgba(255,255,255,.35);min-height:18px}
+#loading-screen p{margin-top:16px;font-size:14px;color:rgba(255,200,220,.4)}
+#load-progress{margin-top:8px;font-size:12px;color:rgba(255,200,220,.25);min-height:18px}
 #guide-overlay{
   position:fixed;top:0;left:0;width:100%;height:100%;
-  background:rgba(0,0,0,.7);z-index:500;display:flex;
-  align-items:center;justify-content:center;backdrop-filter:blur(4px);transition:opacity .5s;
+  background:rgba(13,2,24,.75);z-index:500;display:flex;
+  align-items:center;justify-content:center;backdrop-filter:blur(6px);transition:opacity .6s;
 }
 #guide-overlay.hidden{opacity:0;pointer-events:none}
-.guide-card{background:rgba(20,20,35,.95);border-radius:16px;padding:32px 40px;max-width:420px;text-align:center;border:1px solid rgba(255,255,255,.1);box-shadow:0 20px 60px rgba(0,0,0,.5)}
-.guide-card h2{font-size:22px;margin-bottom:8px}
-.guide-card p{font-size:14px;color:rgba(255,255,255,.6);margin-bottom:20px;line-height:1.6}
+.guide-card{background:rgba(30,10,40,.92);border-radius:20px;padding:32px 40px;max-width:420px;text-align:center;border:1px solid rgba(255,200,220,.1);box-shadow:0 20px 60px rgba(255,100,150,.1)}
+.guide-card h2{font-size:22px;margin-bottom:8px;background:linear-gradient(135deg,#ff6b9d,#e0aaff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.guide-card p{font-size:14px;color:rgba(255,200,220,.5);margin-bottom:20px;line-height:1.6}
 .guide-items{display:flex;justify-content:center;gap:24px;margin-bottom:24px;flex-wrap:wrap}
 .guide-item{text-align:center}
 .guide-item .emoji{font-size:36px;display:block;margin-bottom:6px}
-.guide-item .desc{font-size:13px;color:rgba(255,255,255,.8);margin-top:2px}
-.guide-item .label{font-size:12px;color:rgba(255,255,255,.5)}
-.guide-close{padding:10px 32px;border-radius:8px;background:linear-gradient(135deg,#5588ff,#8855ff);border:none;color:#fff;font-size:14px;cursor:pointer;transition:transform .15s}
-.guide-close:hover{transform:scale(1.05)}
-.guide-dismiss{display:block;margin-top:10px;font-size:11px;color:rgba(255,255,255,.3);cursor:pointer}
-.guide-dismiss:hover{color:rgba(255,255,255,.6)}
+.guide-item .desc{font-size:13px;color:rgba(255,200,220,.7);margin-top:2px}
+.guide-item .label{font-size:12px;color:rgba(255,200,220,.35)}
+.guide-close{padding:10px 32px;border-radius:24px;background:linear-gradient(135deg,#ff6b9d,#e0aaff);border:none;color:#fff;font-size:14px;cursor:pointer;transition:all .3s;box-shadow:0 4px 20px rgba(255,107,157,.3)}
+.guide-close:hover{transform:scale(1.05);box-shadow:0 6px 30px rgba(255,107,157,.5)}
+.guide-dismiss{display:block;margin-top:10px;font-size:11px;color:rgba(255,200,220,.25);cursor:pointer}
+.guide-dismiss:hover{color:rgba(255,200,220,.5)}
 #flash-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;z-index:8000;opacity:0;pointer-events:none;transition:opacity .15s}
-#flash-overlay.active{opacity:.4}
+#flash-overlay.active{opacity:.3}
 </style>
 
 <script>
-// ===== file:// 协议检测 =====
-if (location.protocol === 'file:') {
-  document.addEventListener('DOMContentLoaded', function() {
-    var ls = document.getElementById('loading-screen');
-    if (ls) {
-      ls.innerHTML = '<div style="text-align:center;color:#fff;padding:30px;max-width:520px;">' +
-        '<div style="font-size:48px;margin-bottom:16px;">🚫</div>' +
-        '<h2 style="margin-bottom:12px;">需要本地服务器</h2>' +
-        '<p style="color:rgba(255,255,255,.6);line-height:1.6;margin-bottom:20px;">' +
-        '你正在用 <b>file://</b> 双击打开此文件，浏览器会阻止：<br>' +
-        '• 摄像头访问（手部追踪）<br>' +
-        '• WASM 模型加载（MediaPipe）<br>' +
-        '• ES Module 跨域加载</p>' +
-        '<div style="background:rgba(255,255,255,.08);border-radius:10px;padding:16px 20px;text-align:left;font-size:13px;color:#7af;margin-bottom:20px;">' +
-        '<b>解决方法：</b>在文件所在文件夹打开终端，运行：<br><br>' +
-        '<code style="background:rgba(0,0,0,.4);padding:6px 12px;border-radius:6px;display:block;color:#5d6;font-size:14px;">python -m http.server 8080</code><br>' +
-        '然后访问 <b>http://localhost:8080/particle-visualizer.html</b></div>' +
-        '<p style="color:rgba(255,255,255,.35);font-size:11px;">鼠标交互仍可用，但摄像头功能将被禁用</p></div>';
-    }
-  });
-}
-
-// ===== Import Map 兼容性检测 =====
-if (!HTMLScriptElement.supports || !HTMLScriptElement.supports('importmap')) {
-  document.addEventListener('DOMContentLoaded', function() {
-    var ls = document.getElementById('loading-screen');
-    if (ls && location.protocol !== 'file:') {
-      ls.innerHTML = '<div style="text-align:center;color:#fff;padding:20px;">' +
-        '<div style="font-size:48px;margin-bottom:16px;">🚫</div>' +
-        '<h2 style="margin-bottom:12px;">浏览器不兼容</h2>' +
-        '<p style="color:rgba(255,255,255,.6);max-width:400px;line-height:1.6;">' +
-        '您的浏览器不支持 Import Map，请升级：<br><br>' +
-        '• Chrome 89+ / Edge 89+<br>• Safari 16.4+<br>• Firefox 108+</p></div>';
-    }
+if(location.protocol==='file:'){
+  document.addEventListener('DOMContentLoaded',function(){
+    var ls=document.getElementById('loading-screen');
+    if(ls){ls.innerHTML='<div style="text-align:center;color:#fff;padding:30px;max-width:520px;">'+
+      '<div style="font-size:48px;margin-bottom:16px;">🚫</div>'+
+      '<h2 style="margin-bottom:12px;">需要本地服务器</h2>'+
+      '<p style="color:rgba(255,255,255,.6);line-height:1.6;margin-bottom:20px;">'+
+      '请用 http://localhost 打开此文件，<br>或部署到 GitHub Pages。</p></div>';}
   });
 }
 </script>
@@ -116,20 +90,20 @@ if (!HTMLScriptElement.supports || !HTMLScriptElement.supports('importmap')) {
 
 <div id="loading-screen">
   <div class="loader-ring"></div>
-  <p>初始化粒子系统...</p>
+  <p>✨ 粒子星空加载中...</p>
   <div id="load-progress"></div>
 </div>
 
 <div id="guide-overlay" class="hidden">
   <div class="guide-card">
-    <h2>✨ 3D 粒子交互</h2>
-    <p>使用手势或鼠标与粒子系统互动</p>
+    <h2>✨ 粒子星空</h2>
+    <p>用手势或指尖与星光互动</p>
     <div class="guide-items">
       <div class="guide-item"><span class="emoji">🖐️</span><div class="desc">张/握拳</div><div class="label">控制聚散</div></div>
-      <div class="guide-item"><span class="emoji">👋</span><div class="desc">左右移动</div><div class="label">旋转模型</div></div>
-      <div class="guide-item"><span class="emoji">🖱️</span><div class="desc">拖拽/滚轮</div><div class="label">鼠标交互</div></div>
+      <div class="guide-item"><span class="emoji">👋</span><div class="desc">左右移动</div><div class="label">旋转星河</div></div>
+      <div class="guide-item"><span class="emoji">🖱️</span><div class="desc">拖拽/滚轮</div><div class="label">指尖互动</div></div>
     </div>
-    <button class="guide-close" id="guide-start-btn">开始体验</button>
+    <button class="guide-close" id="guide-start-btn">开始探索</button>
     <span class="guide-dismiss" id="guide-dismiss-btn">不再显示</span>
   </div>
 </div>
@@ -137,10 +111,10 @@ if (!HTMLScriptElement.supports || !HTMLScriptElement.supports('importmap')) {
 <div id="flash-overlay"></div>
 
 <div id="status-bar">
-  粒子: <span id="particle-count">0</span> |
-  FPS: <span id="fps-display">--</span> |
-  手部: <span id="hand-status">未检测</span> |
-  <span id="control-mode">🖱️ 鼠标</span>
+  ✨ <span id="particle-count">0</span> 粒子 |
+  <span id="fps-display">--</span> FPS |
+  <span id="hand-status">未检测</span> |
+  <span id="control-mode">🖱️</span>
 </div>
 
 <div id="canvas-container"></div>
@@ -148,9 +122,9 @@ if (!HTMLScriptElement.supports || !HTMLScriptElement.supports('importmap')) {
 <div id="webcam-container">
   <video id="webcam-video" autoplay playsinline muted></video>
   <canvas id="hand-canvas"></canvas>
-  <div id="webcam-label">📷 手部追踪</div>
+  <div id="webcam-label">✨ 手部追踪</div>
   <div id="webcam-overlay">
-    <div><div class="icon">📷</div><div>正在请求摄像头权限...</div></div>
+    <div><div class="icon">📷</div><div>正在请求摄像头...</div></div>
   </div>
 </div>
 
@@ -159,125 +133,121 @@ if (!HTMLScriptElement.supports || !HTMLScriptElement.supports('importmap')) {
 
 <!-- ============ 配置 ============ -->
 <script>
-var CONFIG = {
-  PARTICLE_COUNT_DEFAULT: 8000,
-  PARTICLE_COUNT_MIN: 3000,
-  PARTICLE_COUNT_MAX: 15000,
-  PARTICLE_COUNT_STEP: 1000,
-  PARTICLE_BASE_SIZE: 2.0,
-  BG_STAR_COUNT: 3000,
-  BG_STAR_Z_MIN: -200,
-  BG_STAR_Z_MAX: -50,
-  SMOOTHING_FACTOR: 0.15,
-  ROTATION_SENSITIVITY: 0.05,
-  OPENNESS_SENSITIVITY: 1.0,
-  MOUSE_ROTATION_SPEED: 0.003,
-  MOUSE_WHEEL_SPEED: 0.05,
-  SCALE_MIN: 0.5,
-  SCALE_MAX: 3.0,
-  BLOOM_THRESHOLD: 0.6,
-  BLOOM_STRENGTH: 0.4,
-  BLOOM_RADIUS: 0.5,
-  TRANSITION_DURATION: 800,
-  TRANSITION_BATCH_SIZE: 3000,
-  BASE_COLOR: '#223366',
-  PARTICLE_OPACITY: 0.5,
-  BREATHING_AMPLITUDE: 0.06,
-  BREATHING_SPEED: 0.5,
-  BG_TWINKLE_SPEED: 1.5,
-  // 星座连线
-  CONSTELLATION_ENABLED: true,
-  CONSTELLATION_MAX_DIST: 4.0,
-  CONSTELLATION_OPACITY: 0.12,
-  CONSTELLATION_UPDATE_INTERVAL: 4,
+var CONFIG={
+  PARTICLE_COUNT_DEFAULT:8000,PARTICLE_COUNT_MIN:3000,PARTICLE_COUNT_MAX:15000,PARTICLE_COUNT_STEP:1000,
+  PARTICLE_BASE_SIZE:2.2,
+  BG_STAR_COUNT:3000,BG_STAR_Z_MIN:-200,BG_STAR_Z_MAX:-50,
+  SMOOTHING_FACTOR:0.12,ROTATION_SENSITIVITY:0.04,OPENNESS_SENSITIVITY:1.0,
+  MOUSE_ROTATION_SPEED:0.002,MOUSE_WHEEL_SPEED:0.05,
+  SCALE_MIN:0.5,SCALE_MAX:3.0,
+  BLOOM_THRESHOLD:0.3,BLOOM_STRENGTH:1.0,BLOOM_RADIUS:0.8,
+  TRANSITION_DURATION:1000,TRANSITION_BATCH_SIZE:3000,
+  BASE_COLOR:'#ff6b9d',
+  PARTICLE_OPACITY:0.6,
+  BREATHING_AMPLITUDE:0.1,BREATHING_SPEED:0.4,
+  BG_TWINKLE_SPEED:1.2,
+  CONSTELLATION_ENABLED:false,
+  CONSTELLATION_MAX_DIST:3.5,CONSTELLATION_OPACITY:0.06,CONSTELLATION_UPDATE_INTERVAL:6,
+  AUTO_ROTATE_SPEED:0.08,
 };
-if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-  CONFIG.TRANSITION_DURATION = 0;
-  CONFIG.SMOOTHING_FACTOR = 1;
-  CONFIG.BREATHING_AMPLITUDE = 0;
+if(window.matchMedia('(prefers-reduced-motion:reduce)').matches){
+  CONFIG.TRANSITION_DURATION=0;CONFIG.SMOOTHING_FACTOR=1;CONFIG.BREATHING_AMPLITUDE=0;
 }
-var IS_MOBILE = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-if (IS_MOBILE) { CONFIG.PARTICLE_COUNT_DEFAULT = 5000; CONFIG.BG_STAR_COUNT = 1500; }
-function setLoadProgress(msg) { var el = document.getElementById('load-progress'); if (el) el.textContent = msg; }
+var IS_MOBILE=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+if(IS_MOBILE){CONFIG.PARTICLE_COUNT_DEFAULT=5000;CONFIG.BG_STAR_COUNT=1500;}
+function setLoadProgress(m){var el=document.getElementById('load-progress');if(el)el.textContent=m;}
 </script>
 
 <!-- ============ 依赖 ============ -->
 <script type="importmap">
-{
-  "imports": {
-    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
-  }
-}
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
 </script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lil-gui@0.19.2/dist/lil-gui.min.css">
 <script src="https://cdn.jsdelivr.net/npm/lil-gui@0.19.2/dist/lil-gui.umd.js"></script>
-<!-- MediaPipe Tasks Vision (新版 API，无需 camera_utils) -->
 
 <script>
-setTimeout(function() {
-  var ls = document.getElementById('loading-screen');
-  if (ls && !ls.classList.contains('fade-out')) {
-    ls.innerHTML = '<div style="text-align:center;color:#fff;padding:20px;">' +
-      '<div style="font-size:48px;margin-bottom:16px;">⚠️</div>' +
-      '<h2 style="margin-bottom:12px;">加载超时</h2>' +
-      '<p style="color:rgba(255,255,255,.6);max-width:400px;line-height:1.6;">' +
-      '模块加载失败，请检查网络后刷新。<br>推荐 Chrome / Edge。</p>' +
-      '<button onclick="location.reload()" style="margin-top:20px;padding:10px 28px;border-radius:8px;' +
-      'background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;' +
-      'cursor:pointer;font-size:14px;">刷新重试</button></div>';
+setTimeout(function(){
+  var ls=document.getElementById('loading-screen');
+  if(ls&&!ls.classList.contains('fade-out')){
+    ls.innerHTML='<div style="text-align:center;color:#fff;padding:20px;">'+
+      '<div style="font-size:48px;margin-bottom:16px;">⚠️</div>'+
+      '<h2 style="margin-bottom:12px;">加载超时</h2>'+
+      '<p style="color:rgba(255,255,255,.5);max-width:400px;line-height:1.6;">请检查网络后刷新</p>'+
+      '<button onclick="location.reload()" style="margin-top:20px;padding:10px 28px;border-radius:24px;'+
+      'background:linear-gradient(135deg,#ff6b9d,#e0aaff);border:none;color:#fff;cursor:pointer;">刷新</button></div>';
   }
-}, 15000);
+},20000);
 </script>
 
 <!-- ============ 主模块 ============ -->
 <script type="module">
-import * as THREE from 'three';
-import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
-import { FilesetResolver, HandLandmarker } from 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.9/vision_bundle.mjs';
+import*as THREE from'three';
+import{EffectComposer}from'three/addons/postprocessing/EffectComposer.js';
+import{RenderPass}from'three/addons/postprocessing/RenderPass.js';
+import{UnrealBloomPass}from'three/addons/postprocessing/UnrealBloomPass.js';
+import{FilesetResolver,HandLandmarker}from'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.9/vision_bundle.mjs';
+try{
+if(typeof THREE==='undefined')throw new Error('Three.js 加载失败');
 
-try {
+var scene,camera,renderer,composer,bloomPass;
+var particleSystem,bgStarSystem,constellationSystem,meteorSystem;
+var gui;var clock=new THREE.Clock();
 
-// ===== 依赖检查 =====
-if (typeof THREE === 'undefined') throw new Error('Three.js 加载失败');
+var handState={detected:false,openness:0,targetOpenness:0,dx:0,dy:0,targetDx:0,targetDy:0};
+var mouseState={isDown:false,prevX:0,prevY:0,wheelDelta:0};
+var targetRotation={x:0,y:0};
+var currentModel='heart';
+var particleCount=CONFIG.PARTICLE_COUNT_DEFAULT;
+var particlePositions,particleTargets,particleStarts,particleSpeeds;
+var isTransitioning=false,transitionStartTime=0,transitionBatchIdx=0;
+var rotationPaused=false;
+var handLandmarker=null,mpLoadTimer=null,mpVideoStream=null;
 
-var scene, camera, renderer, composer, bloomPass;
-var particleSystem, bgStarSystem, constellationSystem;
-var gui;
-var clock = new THREE.Clock();
-
-var handState = { detected:false, openness:0, targetOpenness:0, dx:0, dy:0, targetDx:0, targetDy:0 };
-var mouseState = { isDown:false, prevX:0, prevY:0, wheelDelta:0 };
-var targetRotation = { x:0, y:0 };
-
-var currentModel = 'nebula';
-var particleCount = CONFIG.PARTICLE_COUNT_DEFAULT;
-var particlePositions, particleTargets, particleStarts, particleSpeeds;
-var isTransitioning = false, transitionStartTime = 0, transitionBatchIdx = 0;
-var rotationPaused = false;
-var handLandmarker = null, mpLoadTimer = null, mpVideoStream = null;
-
-var uniforms = {
-  baseColor: { value: new THREE.Color(CONFIG.BASE_COLOR) },
-  time: { value: 0 },
-  openness: { value: 0 },
-  particleTexture: { value: null },
+var uniforms={
+  baseColor:{value:new THREE.Color(CONFIG.BASE_COLOR)},
+  time:{value:0},openness:{value:0},particleTexture:{value:null},
 };
 
 // ===== 工具 =====
 function lerp(a,b,t){return a+(b-a)*t}
 function damp(c,t,l,dt){return lerp(c,t,1-Math.exp(-l*dt))}
 function noise3D(x,y,z){return Math.sin(x*1.27+y*3.71+z*2.53)*.5+Math.sin(x*2.13-y*1.37+z*4.21)*.3+Math.sin(x*.73+y*2.91-z*1.83)*.2}
+// 弹性缓出
+function elasticOut(t){return Math.pow(2,-10*t)*Math.sin((t-0.075)*(2*Math.PI)/0.3)+1}
 
+// ===== 星光粒子贴图 =====
 function createParticleTexture(){
-  var c=document.createElement('canvas');c.width=64;c.height=64;
-  var ctx=c.getContext('2d');
-  var g=ctx.createRadialGradient(32,32,0,32,32,32);
-  g.addColorStop(0,'rgba(255,255,255,1)');g.addColorStop(.3,'rgba(255,255,255,.6)');
-  g.addColorStop(.6,'rgba(255,255,255,.15)');g.addColorStop(1,'rgba(255,255,255,0)');
-  ctx.fillStyle=g;ctx.fillRect(0,0,64,64);
+  var s=128,c=document.createElement('canvas');c.width=s;c.height=s;
+  var ctx=c.getContext('2d'),h=s/2;
+  // 底层柔光晕
+  var g1=ctx.createRadialGradient(h,h,0,h,h,h);
+  g1.addColorStop(0,'rgba(255,255,255,1)');
+  g1.addColorStop(0.15,'rgba(255,240,250,0.8)');
+  g1.addColorStop(0.4,'rgba(255,200,230,0.2)');
+  g1.addColorStop(1,'rgba(255,200,230,0)');
+  ctx.fillStyle=g1;ctx.fillRect(0,0,s,s);
+  // 十字星光
+  ctx.globalCompositeOperation='lighter';
+  var grad=ctx.createLinearGradient(h,0,h,s);
+  grad.addColorStop(0,'rgba(255,255,255,0)');
+  grad.addColorStop(0.35,'rgba(255,240,255,0.6)');
+  grad.addColorStop(0.5,'rgba(255,255,255,0.9)');
+  grad.addColorStop(0.65,'rgba(255,240,255,0.6)');
+  grad.addColorStop(1,'rgba(255,255,255,0)');
+  ctx.fillStyle=grad;ctx.fillRect(h-1,0,2,s);
+  var grad2=ctx.createLinearGradient(0,h,s,h);
+  grad2.addColorStop(0,'rgba(255,255,255,0)');
+  grad2.addColorStop(0.35,'rgba(255,240,255,0.6)');
+  grad2.addColorStop(0.5,'rgba(255,255,255,0.9)');
+  grad2.addColorStop(0.65,'rgba(255,240,255,0.6)');
+  grad2.addColorStop(1,'rgba(255,255,255,0)');
+  ctx.fillStyle=grad2;ctx.fillRect(0,h,s,2);
+  // 中心亮核
+  var g2=ctx.createRadialGradient(h,h,0,h,h,8);
+  g2.addColorStop(0,'rgba(255,255,255,1)');
+  g2.addColorStop(1,'rgba(255,255,255,0)');
+  ctx.fillStyle=g2;ctx.fillRect(h-8,h-8,16,16);
+  ctx.globalCompositeOperation='source-over';
   uniforms.particleTexture.value=new THREE.CanvasTexture(c);
 }
 
@@ -285,10 +255,27 @@ function createParticleTexture(){
 function createParticleModel(m,n){
   var p=new Float32Array(n*3);
   switch(m){
-    case 'nebula':genNebula(p,n);break;case 'firework':genFirework(p,n);break;
-    case 'saturn':genSaturn(p,n);break;case 'flower':genFlower(p,n);break;
+    case'heart':genHeart(p,n);break;case'nebula':genNebula(p,n);break;
+    case'firework':genFirework(p,n);break;case'saturn':genSaturn(p,n);break;
+    case'flower':genFlower(p,n);break;
   }
   return p;
+}
+
+// ❤️ 心形
+function genHeart(p,n){
+  for(var i=0;i<n;i++){
+    var t=Math.random()*Math.PI*2;
+    // 心形参数方程
+    var x=16*Math.pow(Math.sin(t),3);
+    var y=13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t);
+    var z=(Math.random()-.5)*4;
+    var r=.22+Math.random()*.15;
+    // 在心形表面附近散布
+    p[i*3]=x*r+(Math.random()-.5)*1.2;
+    p[i*3+1]=y*r+(Math.random()-.5)*1.2;
+    p[i*3+2]=z;
+  }
 }
 function genNebula(p,n){for(var i=0;i<n;i++){var t=Math.random()*Math.PI*2,ph=Math.acos(2*Math.random()-1),r=3+Math.random()*5+noise3D(Math.sin(ph)*Math.cos(t)*2,Math.sin(ph)*Math.sin(t)*2,Math.cos(ph)*2)*2.5;p[i*3]=r*Math.sin(ph)*Math.cos(t);p[i*3+1]=r*Math.sin(ph)*Math.sin(t);p[i*3+2]=r*Math.cos(ph);}}
 function genFirework(p,n){for(var i=0;i<n;i++){var a=i%6,t=(i/n)*3,an=(a/6)*Math.PI*2+t*Math.PI*2,r=t*3.5+Math.random()*.8;p[i*3]=r*Math.cos(an);p[i*3+1]=(Math.random()-.5)*1.5+t*.5;p[i*3+2]=r*Math.sin(an);}}
@@ -297,52 +284,78 @@ function genFlower(p,n){for(var i=0;i<n;i++){var t=(i/n)*Math.PI*2,r=Math.abs(Ma
 
 // ===== 星座连线 =====
 function createConstellationLines(count){
-  var maxLines = count * 3;
-  var geo = new THREE.BufferGeometry();
-  var pos = new Float32Array(maxLines * 6);
-  var col = new Float32Array(maxLines * 6);
-  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-  geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
-  geo.setDrawRange(0, 0);
-
-  var mat = new THREE.LineBasicMaterial({
-    vertexColors: true, transparent: true, opacity: CONFIG.CONSTELLATION_OPACITY,
-    blending: THREE.AdditiveBlending, depthWrite: false,
-  });
-  constellationSystem = new THREE.LineSegments(geo, mat);
-  scene.add(constellationSystem);
+  var maxLines=count*3;
+  var geo=new THREE.BufferGeometry();
+  geo.setAttribute('position',new THREE.BufferAttribute(new Float32Array(maxLines*6),3));
+  geo.setAttribute('color',new THREE.BufferAttribute(new Float32Array(maxLines*6),3));
+  geo.setDrawRange(0,0);
+  var mat=new THREE.LineBasicMaterial({vertexColors:true,transparent:true,opacity:CONFIG.CONSTELLATION_OPACITY,blending:THREE.AdditiveBlending,depthWrite:false});
+  constellationSystem=new THREE.LineSegments(geo,mat);scene.add(constellationSystem);
 }
-
 function updateConstellationLines(){
-  if (!CONFIG.CONSTELLATION_ENABLED || !constellationSystem || !particlePositions) return;
-  var maxDist = CONFIG.CONSTELLATION_MAX_DIST;
-  var maxDist2 = maxDist * maxDist;
-  var linePos = constellationSystem.geometry.attributes.position.array;
-  var lineCol = constellationSystem.geometry.attributes.color.array;
-  var lineIdx = 0;
-  var maxLines = particleCount * 3;
-  var stride = Math.max(1, Math.floor(particleCount / 2000));
-
-  for (var i = 0; i < particleCount && lineIdx < maxLines; i += stride) {
-    var ax = particlePositions[i*3], ay = particlePositions[i*3+1], az = particlePositions[i*3+2];
-    for (var j = i + stride; j < particleCount && lineIdx < maxLines; j += stride) {
-      var dx = ax - particlePositions[j*3], dy = ay - particlePositions[j*3+1], dz = az - particlePositions[j*3+2];
-      var d2 = dx*dx + dy*dy + dz*dz;
-      if (d2 < maxDist2) {
-        var d = Math.sqrt(d2);
-        var alpha = 1 - d / maxDist;
-        var li = lineIdx * 6;
-        linePos[li]=ax; linePos[li+1]=ay; linePos[li+2]=az;
-        linePos[li+3]=particlePositions[j*3]; linePos[li+4]=particlePositions[j*3+1]; linePos[li+5]=particlePositions[j*3+2];
-        lineCol[li]=alpha*.3; lineCol[li+1]=alpha*.6; lineCol[li+2]=alpha;
-        lineCol[li+3]=alpha*.3; lineCol[li+4]=alpha*.6; lineCol[li+5]=alpha;
-        lineIdx++;
+  if(!CONFIG.CONSTELLATION_ENABLED||!constellationSystem||!particlePositions)return;
+  var md=CONFIG.CONSTELLATION_MAX_DIST,md2=md*md;
+  var lp=constellationSystem.geometry.attributes.position.array;
+  var lc=constellationSystem.geometry.attributes.color.array;
+  var li=0,ml=particleCount*3,st=Math.max(1,Math.floor(particleCount/1500));
+  for(var i=0;i<particleCount&&li<ml;i+=st){
+    var ax=particlePositions[i*3],ay=particlePositions[i*3+1],az=particlePositions[i*3+2];
+    for(var j=i+st;j<particleCount&&li<ml;j+=st){
+      var dx=ax-particlePositions[j*3],dy=ay-particlePositions[j*3+1],dz=az-particlePositions[j*3+2];
+      var d2=dx*dx+dy*dy+dz*dz;
+      if(d2<md2){
+        var a=1-Math.sqrt(d2)/md,o=li*6;
+        lp[o]=ax;lp[o+1]=ay;lp[o+2]=az;
+        lp[o+3]=particlePositions[j*3];lp[o+4]=particlePositions[j*3+1];lp[o+5]=particlePositions[j*3+2];
+        // 粉紫色连线
+        lc[o]=a*.8;lc[o+1]=a*.3;lc[o+2]=a*.5;
+        lc[o+3]=a*.8;lc[o+4]=a*.3;lc[o+5]=a*.5;
+        li++;
       }
     }
   }
-  constellationSystem.geometry.setDrawRange(0, lineIdx * 2);
-  constellationSystem.geometry.attributes.position.needsUpdate = true;
-  constellationSystem.geometry.attributes.color.needsUpdate = true;
+  constellationSystem.geometry.setDrawRange(0,li*2);
+  constellationSystem.geometry.attributes.position.needsUpdate=true;
+  constellationSystem.geometry.attributes.color.needsUpdate=true;
+}
+
+// ===== 流星系统 =====
+function createMeteors(){
+  var count=20;
+  var geo=new THREE.BufferGeometry();
+  var pos=new Float32Array(count*3),vel=new Float32Array(count*3);
+  var life=new Float32Array(count);
+  for(var i=0;i<count;i++){pos[i*3]=0;pos[i*3+1]=0;pos[i*3+2]=0;life[i]=0;}
+  geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  var mat=new THREE.PointsMaterial({size:1.5,transparent:true,opacity:0,blending:THREE.AdditiveBlending,depthWrite:false,color:0xffeedd});
+  meteorSystem=new THREE.Points(geo,mat);
+  meteorSystem.userData={vel:vel,life:life,count:count};
+  scene.add(meteorSystem);
+}
+function updateMeteors(dt){
+  if(!meteorSystem)return;
+  var d=meteorSystem.userData,pos=meteorSystem.geometry.attributes.position.array;
+  for(var i=0;i<d.count;i++){
+    d.life[i]-=dt;
+    if(d.life[i]<=0){
+      // 随机生成新流星
+      if(Math.random()<dt*0.3){
+        pos[i*3]=(Math.random()-.5)*40;
+        pos[i*3+1]=15+Math.random()*10;
+        pos[i*3+2]=(Math.random()-.5)*40-20;
+        d.vel[i*3]=(Math.random()-.5)*20;
+        d.vel[i*3+1]=-30-Math.random()*20;
+        d.vel[i*3+2]=(Math.random()-.5)*10;
+        d.life[i]=0.5+Math.random()*0.8;
+      }
+      continue;
+    }
+    pos[i*3]+=d.vel[i*3]*dt;
+    pos[i*3+1]+=d.vel[i*3+1]*dt;
+    pos[i*3+2]+=d.vel[i*3+2]*dt;
+  }
+  meteorSystem.geometry.attributes.position.needsUpdate=true;
+  meteorSystem.material.opacity=Math.min(1,d.life[0]*2);
 }
 
 // ===== 粒子系统 =====
@@ -367,7 +380,7 @@ function createParticleSystem(count){
     vertexShader:[
       'attribute float aSize;','attribute float aSpeed;',
       'uniform float openness;','uniform float time;',
-      'varying float vAngle;','varying float vDist;','varying float vAlpha;',
+      'varying float vAngle;','varying float vDist;','varying float vAlpha;','varying float vIdx;',
       'void main(){',
       '  vec3 pos=position;',
       '  float bt=time*'+BS+'*aSpeed+aSize*10.0;',
@@ -375,20 +388,25 @@ function createParticleSystem(count){
       '  float sc=mix('+SM+','+SX+',openness);pos*=sc;',
       '  vec4 mv=modelViewMatrix*vec4(pos,1.0);',
       '  vDist=length(position)/8.0;vAngle=atan(position.x,position.z)/6.2832;',
-      '  vAlpha=smoothstep(50.0,5.0,-mv.z);',
+      '  vAlpha=smoothstep(80.0,8.0,-mv.z);vIdx=aSize;',
       '  gl_PointSize=max(aSize*'+PS+'*(300.0/-mv.z),1.0);',
       '  gl_Position=projectionMatrix*mv;',
       '}'
     ].join('\n'),
     fragmentShader:[
       'uniform vec3 baseColor;','uniform float time;','uniform sampler2D particleTexture;',
-      'varying float vAngle;','varying float vDist;','varying float vAlpha;',
+      'varying float vAngle;','varying float vDist;','varying float vAlpha;','varying float vIdx;',
       'void main(){',
       '  vec4 tc=texture2D(particleTexture,gl_PointCoord);if(tc.a<.01)discard;',
-      '  float hs=vAngle+time*.05+vDist*.3;vec3 c=baseColor;',
-      '  c.r+=sin(hs*6.2832)*.12;c.g+=sin(hs*6.2832+2.094)*.12;c.b+=sin(hs*6.2832+4.189)*.12;',
+      // 极光渐变：基于角度+距离+时间的彩虹色
+      '  float t=time*.08;',
+      '  float h=vAngle+vDist*.4+t;',
+      '  vec3 c=baseColor;',
+      '  c.r+=.3*sin(h*6.2832);c.g+=.2*sin(h*6.2832+2.1);c.b+=.35*sin(h*6.2832+4.2);',
+      // 中心暖色，边缘冷色
+      '  float center=1.0-length(gl_PointCoord-.5)*2.0;',
+      '  c=mix(c,vec3(1.,.85,.9),center*.3);',
       '  c=clamp(c,0.0,1.0);',
-      '  c+=(1.0-length(gl_PointCoord-.5)*2.0)*.06;c=clamp(c,0.0,1.0);',
       '  gl_FragColor=vec4(c,tc.a*'+PO+'*vAlpha);',
       '}'
     ].join('\n'),
@@ -397,12 +415,11 @@ function createParticleSystem(count){
   particleSystem=new THREE.Points(geo,mat);
   scene.add(particleSystem);
 
-  // 重建星座连线
   if(constellationSystem){scene.remove(constellationSystem);constellationSystem.geometry.dispose();constellationSystem.material.dispose();}
   createConstellationLines(count);
 }
 
-// ===== 背景星空 =====
+// ===== 背景星空+星云 =====
 function createBackgroundStars(){
   if(bgStarSystem){scene.remove(bgStarSystem);bgStarSystem.geometry.dispose();bgStarSystem.material.dispose();}
   var n=CONFIG.BG_STAR_COUNT,geo=new THREE.BufferGeometry();
@@ -410,7 +427,10 @@ function createBackgroundStars(){
   for(var i=0;i<n;i++){
     pos[i*3]=(Math.random()-.5)*200;pos[i*3+1]=(Math.random()-.5)*200;
     pos[i*3+2]=CONFIG.BG_STAR_Z_MIN+Math.random()*(CONFIG.BG_STAR_Z_MAX-CONFIG.BG_STAR_Z_MIN);
-    var c=new THREE.Color().setHSL(Math.random(),.6+Math.random()*.4,.5+Math.random()*.3);
+    // 偏暖色：粉/金/淡紫
+    var hues=[.95,.0,.85,.12,.65];
+    var h=hues[Math.floor(Math.random()*hues.length)]+Math.random()*.1;
+    var c=new THREE.Color().setHSL(h,.4+Math.random()*.4,.6+Math.random()*.3);
     col[i*3]=c.r;col[i*3+1]=c.g;col[i*3+2]=c.b;phases[i]=Math.random()*Math.PI*2;
   }
   geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
@@ -420,18 +440,18 @@ function createBackgroundStars(){
     uniforms:{time:uniforms.time,twinkleSpeed:{value:CONFIG.BG_TWINKLE_SPEED}},
     vertexShader:['attribute float aPhase;','attribute vec3 color;','uniform float time;','uniform float twinkleSpeed;',
       'varying vec3 vCol;','varying float vBr;',
-      'void main(){','  vCol=color;vBr=.6+.4*sin(time*twinkleSpeed+aPhase);',
+      'void main(){','  vCol=color;vBr=.5+.5*sin(time*twinkleSpeed+aPhase);',
       '  vec4 mv=modelViewMatrix*vec4(position,1.0);',
       '  gl_PointSize=max(1.2*(200.0/-mv.z),0.5);','  gl_Position=projectionMatrix*mv;','}'].join('\n'),
     fragmentShader:['varying vec3 vCol;','varying float vBr;',
       'void main(){','  float d=length(gl_PointCoord-.5);if(d>.5)discard;',
-      '  float a=(1.0-smoothstep(.2,.5,d))*.25*vBr;','  gl_FragColor=vec4(vCol,a);','}'].join('\n'),
+      '  float a=(1.0-smoothstep(.15,.5,d))*.35*vBr;','  gl_FragColor=vec4(vCol,a);','}'].join('\n'),
     transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,
   });
   bgStarSystem=new THREE.Points(geo,mat);scene.add(bgStarSystem);
 }
 
-// ===== 模型切换 =====
+// ===== 模型切换(弹性缓出) =====
 function switchModel(name){
   if(name===currentModel&&!isTransitioning)return;
   currentModel=name;particleStarts.set(particlePositions);
@@ -446,14 +466,14 @@ function updateParticleCount(c){if(c===particleCount)return;particleCount=c;crea
 
 // ===== GUI =====
 function createGUI(){
-  gui=new lil.GUI({title:'🎛️ 粒子控制面板',width:280});
+  gui=new lil.GUI({title:'✨ 粒子星空',width:280});
   gui.domElement.style.position='fixed';gui.domElement.style.right='16px';gui.domElement.style.top='16px';gui.domElement.style.zIndex='100';
   var p={model:currentModel,baseColor:CONFIG.BASE_COLOR,particleCount:particleCount,bloomStrength:CONFIG.BLOOM_STRENGTH,handSensitivity:CONFIG.OPENNESS_SENSITIVITY};
-  gui.add(p,'model',{'🌌 星云':'nebula','🎆 烟花':'firework','🪐 土星':'saturn','🌸 花朵':'flower'}).name('粒子模型').onChange(function(v){switchModel(v);});
-  gui.addColor(p,'baseColor').name('基础颜色').onChange(function(v){uniforms.baseColor.value.set(v);});
-  gui.add(p,'particleCount',CONFIG.PARTICLE_COUNT_MIN,CONFIG.PARTICLE_COUNT_MAX,CONFIG.PARTICLE_COUNT_STEP).name('粒子密度').onFinishChange(function(v){updateParticleCount(Math.round(v));});
-  gui.add(p,'bloomStrength',0,2,.05).name('辉光强度').onChange(function(v){bloomPass.strength=v;bloomPass.enabled=v>.01;});
-  gui.add(p,'handSensitivity',.5,2,.1).name('手掌灵敏度').onChange(function(v){CONFIG.OPENNESS_SENSITIVITY=v;});
+  gui.add(p,'model',{'❤️ 爱心':'heart','🌌 星云':'nebula','🎆 烟花':'firework','🪐 土星':'saturn','🌸 花朵':'flower'}).name('✨ 模型').onChange(function(v){switchModel(v);});
+  gui.addColor(p,'baseColor').name('🎨 颜色').onChange(function(v){uniforms.baseColor.value.set(v);});
+  gui.add(p,'particleCount',CONFIG.PARTICLE_COUNT_MIN,CONFIG.PARTICLE_COUNT_MAX,CONFIG.PARTICLE_COUNT_STEP).name('✨ 密度').onFinishChange(function(v){updateParticleCount(Math.round(v));});
+  gui.add(p,'bloomStrength',0,2,.05).name('💫 辉光').onChange(function(v){bloomPass.strength=v;bloomPass.enabled=v>.01;});
+  gui.add(p,'handSensitivity',.5,2,.1).name('🖐️ 灵敏度').onChange(function(v){CONFIG.OPENNESS_SENSITIVITY=v;});
 }
 
 // ===== 鼠标/触摸 =====
@@ -473,182 +493,113 @@ function initMouseInteraction(){
 function initKeyboard(){
   window.addEventListener('keydown',function(e){
     var k=e.key.toLowerCase();
-    if(k==='1')switchModel('nebula');else if(k==='2')switchModel('firework');
-    else if(k==='3')switchModel('saturn');else if(k==='4')switchModel('flower');
+    if(k==='0')switchModel('heart');else if(k==='1')switchModel('nebula');
+    else if(k==='2')switchModel('firework');else if(k==='3')switchModel('saturn');
+    else if(k==='4')switchModel('flower');
     else if(k===' '){e.preventDefault();rotationPaused=!rotationPaused;}
-    else if(k==='f')toggleFullscreen();
-    else if(k==='s'&&!e.ctrlKey&&!e.metaKey)takeScreenshot();
+    else if(k==='f')toggleFullscreen();else if(k==='s'&&!e.ctrlKey&&!e.metaKey)takeScreenshot();
   });
 }
 
-// ===== 手部追踪 (MediaPipe Tasks Vision) =====
+// ===== 手部追踪 =====
 function initHandTracking(){
   var videoEl=document.getElementById('webcam-video');
   var overlayEl=document.getElementById('webcam-overlay');
   var statusEl=document.getElementById('hand-status');
-
-  console.log('[Hand] 1/4 初始化开始');
   setLoadProgress('加载 MediaPipe WASM...');
 
-  // 1. 加载 WASM 资源
-  console.log('[Hand] 2/4 加载 WASM...');
-  FilesetResolver.forVisionTasks(
-    'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.9/wasm'
-  ).then(function(vision){
-    console.log('[Hand] 2/4 WASM 加载成功');
+  FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.9/wasm')
+  .then(function(vision){
     setLoadProgress('创建手部检测器...');
-
-    // 2. 创建 HandLandmarker，先尝试 GPU，失败则降级 CPU
-    console.log('[Hand] 3/4 创建 HandLandmarker (GPU)...');
-    return HandLandmarker.createFromOptions(vision, {
-      baseOptions: {
-        modelAssetPath: 'hand_landmarker.task',
-        delegate: 'GPU',
-      },
-      runningMode: 'VIDEO',
-      numHands: 1,
-      minHandDetectionConfidence: 0.5,
-      minHandPresenceConfidence: 0.5,
-      minTrackingConfidence: 0.5,
-    }).catch(function(gpuErr){
-      console.warn('[Hand] GPU 失败，降级 CPU:',gpuErr.message);
-      return HandLandmarker.createFromOptions(vision, {
-        baseOptions: {
-          modelAssetPath: 'hand_landmarker.task',
-          delegate: 'CPU',
-        },
-        runningMode: 'VIDEO',
-        numHands: 1,
-        minHandDetectionConfidence: 0.5,
-        minHandPresenceConfidence: 0.5,
-        minTrackingConfidence: 0.5,
-      });
-    });
+    return HandLandmarker.createFromOptions(vision,{
+      baseOptions:{modelAssetPath:'hand_landmarker.task',delegate:'GPU'},
+      runningMode:'VIDEO',numHands:1,
+      minHandDetectionConfidence:0.5,minHandPresenceConfidence:0.5,minTrackingConfidence:0.5,
+    }).catch(function(){return HandLandmarker.createFromOptions(vision,{
+      baseOptions:{modelAssetPath:'hand_landmarker.task',delegate:'CPU'},
+      runningMode:'VIDEO',numHands:1,
+      minHandDetectionConfidence:0.5,minHandPresenceConfidence:0.5,minTrackingConfidence:0.5,
+    });});
   }).then(function(detector){
-    if(!detector) throw new Error('detector 为空');
-    handLandmarker=detector;
-    console.log('[Hand] 3/4 HandLandmarker 创建成功');
-    setLoadProgress('启动摄像头...');
-    startCamera();
+    if(!detector)throw new Error('detector null');
+    handLandmarker=detector;setLoadProgress('启动摄像头...');startCamera();
   }).catch(function(err){
-    console.error('[Hand] 初始化失败:',err);
-    showWebcamError('手部模型加载失败: '+(err.message||err));
+    console.error('[Hand]',err);showWebcamError('手部模型加载失败');
     setTimeout(function(){document.getElementById('webcam-container').style.display='none';},5000);
   });
 
-  // 3. 启动摄像头
   function startCamera(){
-    console.log('[Hand] 4/4 启动摄像头...');
-    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
-      showWebcamError('浏览器不支持摄像头');
-      return;
-    }
-
-    // 释放旧流
-    try{
-      if(mpVideoStream){mpVideoStream.getTracks().forEach(function(t){t.stop();});mpVideoStream=null;}
-      if(videoEl.srcObject){videoEl.srcObject.getTracks().forEach(function(t){t.stop();});videoEl.srcObject=null;}
-    }catch(e){console.warn('[Hand] 清理旧流异常:',e);}
-
+    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){showWebcamError('浏览器不支持摄像头');return;}
+    try{if(mpVideoStream){mpVideoStream.getTracks().forEach(function(t){t.stop();});mpVideoStream=null;}
+    if(videoEl.srcObject){videoEl.srcObject.getTracks().forEach(function(t){t.stop();});videoEl.srcObject=null;}}catch(e){}
     navigator.mediaDevices.getUserMedia({video:{width:{ideal:640},height:{ideal:480},facingMode:'user'}})
-      .then(function(stream){
-        console.log('[Hand] 摄像头权限已获取');
-        mpVideoStream=stream;
-        videoEl.srcObject=stream;
-        videoEl.onloadedmetadata=function(){
-          videoEl.play();
-          overlayEl.classList.add('hidden');
-          statusEl.textContent='加载模型中...';
-          console.log('[Hand] 视频就绪:',videoEl.videoWidth,'x',videoEl.videoHeight);
-          var hc=document.getElementById('hand-canvas');
-          hc.width=videoEl.videoWidth;hc.height=videoEl.videoHeight;
-          startDetectionLoop();
-        };
-      })
-      .catch(function(err){
-        console.error('[Hand] getUserMedia 失败:',err.name,err.message);
-        var msg='无法访问摄像头';
-        if(err.name==='NotAllowedError')msg='摄像头权限被拒绝（请在地址栏🔒中允许）';
-        if(err.name==='NotFoundError')msg='未找到摄像头';
-        if(err.name==='NotReadableError')msg='摄像头被其他应用占用';
-        if(location.protocol!=='https:'&&location.hostname!=='localhost')msg+='（需 HTTPS 或 localhost）';
-        showWebcamError(msg);
-      });
+    .then(function(stream){
+      mpVideoStream=stream;videoEl.srcObject=stream;
+      videoEl.onloadedmetadata=function(){
+        videoEl.play();overlayEl.classList.add('hidden');
+        var hc=document.getElementById('hand-canvas');hc.width=videoEl.videoWidth;hc.height=videoEl.videoHeight;
+        startDetectionLoop();
+      };
+    }).catch(function(err){
+      var msg='无法访问摄像头';
+      if(err.name==='NotAllowedError')msg='摄像头权限被拒绝';
+      if(err.name==='NotFoundError')msg='未找到摄像头';
+      showWebcamError(msg);
+    });
   }
 
-  // 4. 检测循环
   var firstDetected=false;
   function startDetectionLoop(){
-    console.log('[Hand] 检测循环启动');
-    mpLoadTimer=setTimeout(function(){
-      if(!firstDetected){
-        statusEl.textContent='模型加载超时';
-        console.error('[Hand] 15 秒未检测到手部');
-      }
-    },15000);
-
+    mpLoadTimer=setTimeout(function(){if(!firstDetected)statusEl.textContent='加载超时';},15000);
     function frame(){
-      if(!handLandmarker){requestAnimationFrame(frame);return;}
-      if(!videoEl||videoEl.readyState<2){requestAnimationFrame(frame);return;}
+      if(!handLandmarker||!videoEl||videoEl.readyState<2){requestAnimationFrame(frame);return;}
       try{
         var result=handLandmarker.detectForVideo(videoEl,performance.now());
-        if(!firstDetected&&result.landmarks&&result.landmarks.length>0){
-          firstDetected=true;
-          if(mpLoadTimer)clearTimeout(mpLoadTimer);
-          console.log('[Hand] 首次检测成功!');
-        }
+        if(!firstDetected&&result.landmarks&&result.landmarks.length>0){firstDetected=true;if(mpLoadTimer)clearTimeout(mpLoadTimer);}
         onHandUpdate(result);
-      }catch(e){
-        console.warn('[Hand] detect 帧异常:',e.message);
-      }
+      }catch(e){}
       requestAnimationFrame(frame);
     }
     requestAnimationFrame(frame);
   }
 }
 
-function showWebcamError(msg){
-  var el=document.getElementById('webcam-overlay');
-  el.classList.add('error');
-  el.innerHTML='<div><div class="icon">⚠️</div><div>'+msg+'</div></div>';
-}
+function showWebcamError(msg){var el=document.getElementById('webcam-overlay');el.classList.add('error');el.innerHTML='<div><div class="icon">⚠️</div><div>'+msg+'</div></div>';}
 
-// Tasks Vision 结果格式: { landmarks: [[{x,y,z},...], ...], worldLandmarks: [...] }
 function onHandUpdate(result){
-  var hc=document.getElementById('hand-canvas');
-  var ctx=hc.getContext('2d');
-  var w=hc.width,h=hc.height;
+  var hc=document.getElementById('hand-canvas'),ctx=hc.getContext('2d'),w=hc.width,h=hc.height;
   ctx.clearRect(0,0,w,h);
-
   if(result.landmarks&&result.landmarks.length>0){
-    var lm=result.landmarks[0];
-    handState.detected=true;
-    document.getElementById('hand-status').textContent='✅ 已检测';
-    document.getElementById('control-mode').textContent='🖐️ 手部';
+    var lm=result.landmarks[0];handState.detected=true;
+    document.getElementById('hand-status').textContent='✨ 已检测';
+    document.getElementById('control-mode').textContent='🖐️';
     drawHandSkeleton(ctx,lm,w,h);
-
-    // 手掌开合度
     var pcx=(lm[0].x+lm[9].x)/2,pcy=(lm[0].y+lm[9].y)/2,pcz=(lm[0].z+lm[9].z)/2;
     var td=0,tips=[4,8,12,16,20];
     for(var j=0;j<5;j++){var dx=lm[tips[j]].x-pcx,dy=lm[tips[j]].y-pcy,dz=lm[tips[j]].z-pcz;td+=Math.sqrt(dx*dx+dy*dy+dz*dz);}
     handState.targetOpenness=Math.max(0,Math.min(1,(td/5-.04)/.30))*CONFIG.OPENNESS_SENSITIVITY;
-
-    // 手部位移
-    handState.targetDx=-(lm[0].x-.5)*2;
-    handState.targetDy=(lm[0].y-.5)*2;
+    handState.targetDx=-(lm[0].x-.5)*2;handState.targetDy=(lm[0].y-.5)*2;
   }else{
     handState.detected=false;
     document.getElementById('hand-status').textContent='未检测';
-    document.getElementById('control-mode').textContent='🖱️ 鼠标';
+    document.getElementById('control-mode').textContent='🖱️';
     handState.targetOpenness=0;handState.targetDx=0;handState.targetDy=0;
   }
 }
 
 function drawHandSkeleton(ctx,lm,w,h){
   var cn=[[0,1],[1,2],[2,3],[3,4],[0,5],[5,6],[6,7],[7,8],[0,9],[9,10],[10,11],[11,12],[0,13],[13,14],[14,15],[15,16],[0,17],[17,18],[18,19],[19,20],[5,9],[9,13],[13,17]];
-  ctx.strokeStyle='rgba(100,200,255,.6)';ctx.lineWidth=2;
+  // 发光粉紫线条
+  ctx.strokeStyle='rgba(255,150,200,.5)';ctx.lineWidth=2;ctx.shadowColor='rgba(255,107,157,.6)';ctx.shadowBlur=6;
   for(var i=0;i<cn.length;i++){ctx.beginPath();ctx.moveTo(lm[cn[i][0]].x*w,lm[cn[i][0]].y*h);ctx.lineTo(lm[cn[i][1]].x*w,lm[cn[i][1]].y*h);ctx.stroke();}
-  for(var i=0;i<21;i++){ctx.beginPath();ctx.arc(lm[i].x*w,lm[i].y*h,i%4===0?4:2.5,0,Math.PI*2);ctx.fillStyle=i===0?'#ff6688':(i%4===0?'#88ddff':'#aaddff');ctx.fill();}
+  ctx.shadowBlur=0;
+  // 小星星关节点
+  for(var i=0;i<21;i++){
+    var x=lm[i].x*w,y=lm[i].y*h,r=i%4===0?5:3;
+    ctx.save();ctx.translate(x,y);ctx.rotate(Math.PI/4);
+    ctx.fillStyle=i===0?'#ff6b9d':'#e0aaff';
+    ctx.fillRect(-r/2,-r/2,r,r);ctx.restore();
+  }
 }
 
 // ===== 摄像头拖拽 =====
@@ -665,15 +616,13 @@ function initWebcamDrag(){
   document.addEventListener('touchend',end);
 }
 
-// ===== 全屏/截图 =====
 function toggleFullscreen(){if(!document.fullscreenElement)document.documentElement.requestFullscreen().catch(function(){});else document.exitFullscreen().catch(function(){});}
 function takeScreenshot(){
   var fl=document.getElementById('flash-overlay');fl.classList.add('active');setTimeout(function(){fl.classList.remove('active');},150);
   composer.render();
-  renderer.domElement.toBlob(function(b){if(!b)return;var u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='particle-'+currentModel+'-'+Date.now()+'.png';a.click();URL.revokeObjectURL(u);},'image/png');
+  renderer.domElement.toBlob(function(b){if(!b)return;var u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='particles-'+currentModel+'-'+Date.now()+'.png';a.click();URL.revokeObjectURL(u);},'image/png');
 }
 
-// ===== Resize =====
 function onResize(){
   var w=window.innerWidth,h=window.innerHeight;
   camera.aspect=w/h;camera.updateProjectionMatrix();
@@ -683,7 +632,6 @@ function onResize(){
 
 // ===== 主循环 =====
 var frameCount=0,lastFpsTime=0;
-
 function animate(){
   requestAnimationFrame(animate);
   var dt=clock.getDelta(),elapsed=clock.getElapsedTime();
@@ -697,9 +645,10 @@ function animate(){
 
   if(!rotationPaused&&handState.detected){targetRotation.y+=handState.dx*CONFIG.ROTATION_SENSITIVITY;targetRotation.x+=handState.dy*CONFIG.ROTATION_SENSITIVITY;}
 
+  // 模型过渡（弹性缓出）
   if(isTransitioning){
     var t=Math.min(1,(elapsed-transitionStartTime)/(CONFIG.TRANSITION_DURATION/1000));
-    var e=t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+    var e=elasticOut(t);
     var end=Math.min(transitionBatchIdx+CONFIG.TRANSITION_BATCH_SIZE,particleCount);
     for(var i=transitionBatchIdx;i<end;i++){var j=i*3;particlePositions[j]=lerp(particleStarts[j],particleTargets[j],e);particlePositions[j+1]=lerp(particleStarts[j+1],particleTargets[j+1],e);particlePositions[j+2]=lerp(particleStarts[j+2],particleTargets[j+2],e);}
     transitionBatchIdx=end;
@@ -707,68 +656,56 @@ function animate(){
     particleSystem.geometry.attributes.position.needsUpdate=true;
   }
 
-  if(particleSystem){particleSystem.rotation.x=damp(particleSystem.rotation.x,targetRotation.x,5,dt);particleSystem.rotation.y=damp(particleSystem.rotation.y,targetRotation.y,5,dt);}
-  if(bgStarSystem)bgStarSystem.rotation.y+=dt*.02;
-
-  // 星座连线每 N 帧更新
-  if(frameCount%CONFIG.CONSTELLATION_UPDATE_INTERVAL===0)updateConstellationLines();
-
-  composer.render();
-
-  frameCount++;
-  if(elapsed-lastFpsTime>=1){
-    document.getElementById('fps-display').textContent=frameCount;
-    document.getElementById('particle-count').textContent=particleCount;
-    frameCount=0;lastFpsTime=elapsed;
+  // 温柔自转
+  if(particleSystem){
+    if(!handState.detected&&!mouseState.isDown)targetRotation.y+=dt*CONFIG.AUTO_ROTATE_SPEED;
+    particleSystem.rotation.x=damp(particleSystem.rotation.x,targetRotation.x,4,dt);
+    particleSystem.rotation.y=damp(particleSystem.rotation.y,targetRotation.y,4,dt);
   }
+  if(bgStarSystem)bgStarSystem.rotation.y+=dt*.015;
+  if(frameCount%CONFIG.CONSTELLATION_UPDATE_INTERVAL===0)updateConstellationLines();
+  updateMeteors(dt);
+  composer.render();
+  frameCount++;
+  if(elapsed-lastFpsTime>=1){document.getElementById('fps-display').textContent=frameCount;document.getElementById('particle-count').textContent=particleCount;frameCount=0;lastFpsTime=elapsed;}
 }
 
 // ===== 初始化 =====
 function init(){
-  if(typeof THREE==='undefined')throw new Error('Three.js 加载失败');
-
   setLoadProgress('创建渲染器...');
-  scene=new THREE.Scene();scene.fog=new THREE.FogExp2(0x000011,.008);
+  scene=new THREE.Scene();scene.fog=new THREE.FogExp2(0x0d0218,.006);
   camera=new THREE.PerspectiveCamera(60,window.innerWidth/window.innerHeight,.1,500);
   camera.position.set(0,0,18);
   renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});
   renderer.setSize(window.innerWidth,window.innerHeight);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
-  renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.0;
+  renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.1;
   document.getElementById('canvas-container').appendChild(renderer.domElement);
 
   setLoadProgress('后处理...');
-  composer=new EffectComposer(renderer);
-  composer.addPass(new RenderPass(scene,camera));
+  composer=new EffectComposer(renderer);composer.addPass(new RenderPass(scene,camera));
   bloomPass=new UnrealBloomPass(new THREE.Vector2(window.innerWidth,window.innerHeight),CONFIG.BLOOM_STRENGTH,CONFIG.BLOOM_RADIUS,CONFIG.BLOOM_THRESHOLD);
   composer.addPass(bloomPass);
 
-  setLoadProgress('粒子纹理...');
-  createParticleTexture();
-  setLoadProgress('粒子系统...');
-  createParticleSystem(particleCount);
-  setLoadProgress('背景星空...');
-  createBackgroundStars();
+  setLoadProgress('粒子纹理...');createParticleTexture();
+  setLoadProgress('粒子系统...');createParticleSystem(particleCount);
+  setLoadProgress('星空...');createBackgroundStars();createMeteors();
 
-  if(typeof lil!=='undefined'){createGUI();}else{console.warn('lil-gui 未加载');}
+  if(typeof lil!=='undefined')createGUI();
   initMouseInteraction();initKeyboard();
-  try{initHandTracking();}catch(e){console.warn('手部追踪初始化失败，已跳过:',e);document.getElementById('webcam-container').style.display='none';document.getElementById('hand-status').textContent='不可用';}
+  try{initHandTracking();}catch(e){console.warn('手部追踪跳过:',e);document.getElementById('webcam-container').style.display='none';}
   initWebcamDrag();
 
   window.addEventListener('resize',onResize);
-  // 页面关闭/刷新时释放摄像头，防止下次打开被占用
-  window.addEventListener('beforeunload',function(){
-    if(mpVideoStream){mpVideoStream.getTracks().forEach(function(t){t.stop();});}
-  });
   document.getElementById('fullscreen-btn').addEventListener('click',toggleFullscreen);
   document.getElementById('screenshot-btn').addEventListener('click',takeScreenshot);
-
   document.getElementById('guide-start-btn').addEventListener('click',function(){document.getElementById('guide-overlay').classList.add('hidden');});
   document.getElementById('guide-dismiss-btn').addEventListener('click',function(){document.getElementById('guide-overlay').classList.add('hidden');try{localStorage.setItem('particle-guide-dismissed','1');}catch(e){}});
   try{if(!localStorage.getItem('particle-guide-dismissed'))document.getElementById('guide-overlay').classList.remove('hidden');}catch(e){}
+  window.addEventListener('beforeunload',function(){if(mpVideoStream)mpVideoStream.getTracks().forEach(function(t){t.stop();});});
 
-  setLoadProgress('就绪');
-  setTimeout(function(){document.getElementById('loading-screen').classList.add('fade-out');},200);
+  setLoadProgress('✨ 就绪');
+  setTimeout(function(){document.getElementById('loading-screen').classList.add('fade-out');},300);
 }
 
 init();animate();
@@ -779,18 +716,16 @@ init();animate();
   if(ls){
     var msg=err.message||String(err);
     var hint='';
-    if(msg.includes('import')||msg.includes('module'))hint='提示：浏览器可能不支持 ES Module/Import Map，请用 Chrome/Edge 最新版。';
-    else if(msg.includes('THREE')||msg.includes('three'))hint='提示：Three.js CDN 加载失败，请检查网络。';
-    else if(msg.includes('WebGL'))hint='提示：WebGL 不可用，请检查显卡驱动或换用 Chrome。';
+    if(msg.includes('import')||msg.includes('module'))hint='请用 Chrome/Edge 最新版';
+    else if(msg.includes('THREE')||msg.includes('three'))hint='Three.js 加载失败，请检查网络';
+    else if(msg.includes('WebGL'))hint='WebGL 不可用';
     ls.innerHTML='<div style="text-align:center;color:#fff;padding:20px;max-width:600px;word-break:break-all;">'+
-      '<div style="font-size:48px;margin-bottom:16px;">❌</div>'+
-      '<h2 style="margin-bottom:12px;">初始化失败</h2>'+
-      '<p style="color:rgba(255,255,255,.6);line-height:1.6;font-size:13px;margin-bottom:8px;"><b>Error:</b> '+msg+'</p>'+
-      (hint?'<p style="color:#7af;font-size:12px;margin-bottom:16px;">'+hint+'</p>':'')+
-      '<p style="color:rgba(255,255,255,.35);font-size:11px;font-family:monospace;text-align:left;max-height:150px;overflow:auto;background:rgba(255,255,255,.05);padding:8px;border-radius:6px;">'+
-      (err.stack||'')+'</p>'+
-      '<button onclick="location.reload()" style="margin-top:16px;padding:10px 28px;border-radius:8px;'+
-      'background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;cursor:pointer;font-size:14px;">刷新重试</button></div>';
+      '<div style="font-size:48px;margin-bottom:16px;">💫</div>'+
+      '<h2 style="margin-bottom:12px;">加载出了点问题</h2>'+
+      '<p style="color:rgba(255,200,220,.5);line-height:1.6;font-size:13px;">'+msg+'</p>'+
+      (hint?'<p style="color:#ff6b9d;font-size:12px;margin:12px 0;">'+hint+'</p>':'')+
+      '<button onclick="location.reload()" style="margin-top:16px;padding:10px 28px;border-radius:24px;'+
+      'background:linear-gradient(135deg,#ff6b9d,#e0aaff);border:none;color:#fff;cursor:pointer;">重试</button></div>';
   }
 }
 </script>
