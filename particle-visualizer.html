@@ -487,13 +487,19 @@ function initHandTracking(){
   var overlayEl=document.getElementById('webcam-overlay');
   var statusEl=document.getElementById('hand-status');
 
+  console.log('[Hand] 1/4 初始化开始');
   setLoadProgress('加载 MediaPipe WASM...');
 
-  // 1. 加载 WASM 资源 + 创建 HandLandmarker
+  // 1. 加载 WASM 资源
+  console.log('[Hand] 2/4 加载 WASM...');
   FilesetResolver.forVisionTasks(
     'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.9/wasm'
   ).then(function(vision){
+    console.log('[Hand] 2/4 WASM 加载成功');
     setLoadProgress('创建手部检测器...');
+
+    // 2. 创建 HandLandmarker，先尝试 GPU，失败则降级 CPU
+    console.log('[Hand] 3/4 创建 HandLandmarker (GPU)...');
     return HandLandmarker.createFromOptions(vision, {
       baseOptions: {
         modelAssetPath: 'hand_landmarker.task',
@@ -504,82 +510,97 @@ function initHandTracking(){
       minHandDetectionConfidence: 0.5,
       minHandPresenceConfidence: 0.5,
       minTrackingConfidence: 0.5,
+    }).catch(function(gpuErr){
+      console.warn('[Hand] GPU 失败，降级 CPU:',gpuErr.message);
+      return HandLandmarker.createFromOptions(vision, {
+        baseOptions: {
+          modelAssetPath: 'hand_landmarker.task',
+          delegate: 'CPU',
+        },
+        runningMode: 'VIDEO',
+        numHands: 1,
+        minHandDetectionConfidence: 0.5,
+        minHandPresenceConfidence: 0.5,
+        minTrackingConfidence: 0.5,
+      });
     });
   }).then(function(detector){
+    if(!detector) throw new Error('detector 为空');
     handLandmarker=detector;
-    console.log('[Hand] HandLandmarker 创建成功');
+    console.log('[Hand] 3/4 HandLandmarker 创建成功');
+    setLoadProgress('启动摄像头...');
     startCamera();
   }).catch(function(err){
     console.error('[Hand] 初始化失败:',err);
-    showWebcamError('手部模型加载失败，已切换为鼠标模式');
-    setTimeout(function(){document.getElementById('webcam-container').style.display='none';},3000);
+    showWebcamError('手部模型加载失败: '+(err.message||err));
+    setTimeout(function(){document.getElementById('webcam-container').style.display='none';},5000);
   });
 
-  // 2. 启动摄像头（原生 getUserMedia，单一帧循环）
+  // 3. 启动摄像头
   function startCamera(){
+    console.log('[Hand] 4/4 启动摄像头...');
     if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
       showWebcamError('浏览器不支持摄像头');
       return;
     }
-    // 先释放旧的摄像头流，防止刷新后摄像头被占用
-    if(mpVideoStream){mpVideoStream.getTracks().forEach(function(t){t.stop();});mpVideoStream=null;}
-    if(videoEl.srcObject){videoEl.srcObject.getTracks().forEach(function(t){t.stop();});videoEl.srcObject=null;}
+
+    // 释放旧流
+    try{
+      if(mpVideoStream){mpVideoStream.getTracks().forEach(function(t){t.stop();});mpVideoStream=null;}
+      if(videoEl.srcObject){videoEl.srcObject.getTracks().forEach(function(t){t.stop();});videoEl.srcObject=null;}
+    }catch(e){console.warn('[Hand] 清理旧流异常:',e);}
+
     navigator.mediaDevices.getUserMedia({video:{width:{ideal:640},height:{ideal:480},facingMode:'user'}})
       .then(function(stream){
+        console.log('[Hand] 摄像头权限已获取');
         mpVideoStream=stream;
         videoEl.srcObject=stream;
         videoEl.onloadedmetadata=function(){
           videoEl.play();
           overlayEl.classList.add('hidden');
           statusEl.textContent='加载模型中...';
-          console.log('[Hand] 摄像头就绪, 分辨率:',videoEl.videoWidth,'x',videoEl.videoHeight);
-          // 动态设置 hand-canvas 分辨率
+          console.log('[Hand] 视频就绪:',videoEl.videoWidth,'x',videoEl.videoHeight);
           var hc=document.getElementById('hand-canvas');
           hc.width=videoEl.videoWidth;hc.height=videoEl.videoHeight;
-          // 开始推理循环
           startDetectionLoop();
         };
       })
       .catch(function(err){
-        console.error('[Hand] getUserMedia 失败:',err);
+        console.error('[Hand] getUserMedia 失败:',err.name,err.message);
         var msg='无法访问摄像头';
-        if(err.name==='NotAllowedError')msg='摄像头权限被拒绝';
+        if(err.name==='NotAllowedError')msg='摄像头权限被拒绝（请在地址栏🔒中允许）';
         if(err.name==='NotFoundError')msg='未找到摄像头';
-        if(err.name==='NotReadableError')msg='摄像头被占用';
+        if(err.name==='NotReadableError')msg='摄像头被其他应用占用';
         if(location.protocol!=='https:'&&location.hostname!=='localhost')msg+='（需 HTTPS 或 localhost）';
         showWebcamError(msg);
       });
   }
 
-  // 3. 唯一的帧循环：用 requestAnimationFrame + detectForVideo
+  // 4. 检测循环
   var firstDetected=false;
   function startDetectionLoop(){
+    console.log('[Hand] 检测循环启动');
     mpLoadTimer=setTimeout(function(){
       if(!firstDetected){
         statusEl.textContent='模型加载超时';
-        console.error('[Hand] 15 秒未就绪');
+        console.error('[Hand] 15 秒未检测到手部');
       }
     },15000);
 
     function frame(){
       if(!handLandmarker){requestAnimationFrame(frame);return;}
-      if(videoEl.readyState<2){requestAnimationFrame(frame);return;}
-
+      if(!videoEl||videoEl.readyState<2){requestAnimationFrame(frame);return;}
       try{
         var result=handLandmarker.detectForVideo(videoEl,performance.now());
-
-        if(!firstDetected&&(result.landmarks&&result.landmarks.length>0)){
+        if(!firstDetected&&result.landmarks&&result.landmarks.length>0){
           firstDetected=true;
           if(mpLoadTimer)clearTimeout(mpLoadTimer);
-          console.log('[Hand] 首次检测成功');
+          console.log('[Hand] 首次检测成功!');
         }
-
         onHandUpdate(result);
       }catch(e){
-        // 单帧错误不中断循环
-        console.warn('[Hand] detectForVideo 异常:',e.message);
+        console.warn('[Hand] detect 帧异常:',e.message);
       }
-
       requestAnimationFrame(frame);
     }
     requestAnimationFrame(frame);
