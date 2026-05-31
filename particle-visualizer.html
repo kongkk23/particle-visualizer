@@ -6,21 +6,21 @@
 <title>✨ 粒子星空</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{overflow:hidden;background:#0d0218;font-family:'Segoe UI','PingFang SC',sans-serif;color:#ffe4e1;font-weight:300}
+body{overflow:hidden;background:#0a0014;font-family:'Segoe UI','PingFang SC',sans-serif;color:#ffe4e1;font-weight:300}
 #canvas-container{position:fixed;top:0;left:0;width:100%;height:100%}
 #webcam-container{position:fixed;left:16px;bottom:16px;width:200px;height:150px;border-radius:14px;overflow:hidden;border:1px solid rgba(255,200,220,.1);cursor:grab;z-index:100;box-shadow:0 4px 30px rgba(255,100,150,.1);touch-action:none;min-width:120px;min-height:90px}
 #webcam-container:active{cursor:grabbing}
 #webcam-video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1);display:block}
 #hand-canvas{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;transform:scaleX(-1)}
 #webcam-label{position:absolute;top:6px;left:8px;font-size:11px;color:rgba(255,220,230,.5);text-shadow:0 1px 4px rgba(0,0,0,.8);pointer-events:none}
-#webcam-overlay{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:rgba(13,2,24,.88);font-size:12px;text-align:center;padding:12px;pointer-events:none}
+#webcam-overlay{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:rgba(10,0,20,.88);font-size:12px;text-align:center;padding:12px;pointer-events:none}
 #webcam-overlay.hidden{display:none}
 .ctrl-btn{position:fixed;right:16px;width:44px;height:44px;border-radius:50%;background:rgba(255,200,220,.08);border:1px solid rgba(255,200,220,.1);color:rgba(255,220,230,.6);font-size:20px;cursor:pointer;z-index:100;display:flex;align-items:center;justify-content:center;transition:all .4s;backdrop-filter:blur(20px)}
 .ctrl-btn:hover{background:rgba(255,200,220,.15)}
 #fullscreen-btn{bottom:16px}
 #screenshot-btn{bottom:70px;font-size:18px}
-#status-bar{position:fixed;top:16px;left:50%;transform:translateX(-50%);padding:8px 20px;border-radius:24px;background:rgba(20,5,30,.4);backdrop-filter:blur(20px);font-size:12px;color:rgba(255,228,225,.5);font-weight:300;z-index:100;pointer-events:none;white-space:nowrap}
-#loading-screen{position:fixed;top:0;left:0;width:100%;height:100%;background:#0d0218;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity 1.2s}
+#status-bar{position:fixed;top:16px;left:50%;transform:translateX(-50%);padding:8px 20px;border-radius:24px;background:rgba(15,5,25,.5);backdrop-filter:blur(20px);font-size:12px;color:rgba(255,228,225,.5);font-weight:300;z-index:100;pointer-events:none;white-space:nowrap}
+#loading-screen{position:fixed;top:0;left:0;width:100%;height:100%;background:#0a0014;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity 1.2s}
 #loading-screen.fade-out{opacity:0;pointer-events:none}
 .loader-rings{position:relative;width:60px;height:60px}
 .loader-rings .ring{position:absolute;top:0;left:0;width:100%;height:100%;border-radius:50%;border:1.5px solid transparent}
@@ -29,9 +29,9 @@ body{overflow:hidden;background:#0d0218;font-family:'Segoe UI','PingFang SC',san
 @keyframes spin{to{transform:rotate(360deg)}}
 #loading-screen p{margin-top:20px;font-size:14px;color:rgba(255,228,225,.3);font-weight:300;letter-spacing:2px}
 #load-progress{margin-top:8px;font-size:11px;color:rgba(255,228,225,.2);min-height:18px}
-#guide-overlay{position:fixed;top:0;left:0;width:100%;height:100%;z-index:500;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);transition:opacity .8s;background:radial-gradient(circle at center,rgba(255,100,150,.06),transparent 70%),rgba(13,2,24,.75)}
+#guide-overlay{position:fixed;top:0;left:0;width:100%;height:100%;z-index:500;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);transition:opacity .8s;background:radial-gradient(circle at center,rgba(255,100,150,.06),transparent 70%),rgba(10,0,20,.75)}
 #guide-overlay.hidden{opacity:0;pointer-events:none}
-.guide-card{background:rgba(25,10,35,.88);border-radius:24px;padding:36px 44px;max-width:420px;text-align:center;border:1px solid rgba(255,200,220,.06);box-shadow:0 30px 80px rgba(255,100,150,.08)}
+.guide-card{background:rgba(20,8,30,.88);border-radius:24px;padding:36px 44px;max-width:420px;text-align:center;border:1px solid rgba(255,200,220,.06);box-shadow:0 30px 80px rgba(255,100,150,.08)}
 .guide-card h2{font-size:22px;margin-bottom:8px;background:linear-gradient(135deg,#ff6b9d,#e0aaff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:300}
 .guide-card p{font-size:13px;color:rgba(255,228,225,.4);margin-bottom:24px;line-height:1.8}
 .guide-items{display:flex;justify-content:center;gap:28px;margin-bottom:28px;flex-wrap:wrap}
@@ -40,14 +40,14 @@ body{overflow:hidden;background:#0d0218;font-family:'Segoe UI','PingFang SC',san
 .guide-item .desc{font-size:13px;color:rgba(255,228,225,.6);margin-top:2px}
 .guide-item .label{font-size:11px;color:rgba(255,228,225,.25);margin-top:2px}
 .guide-close{padding:12px 36px;border-radius:28px;background:linear-gradient(135deg,rgba(255,107,157,.8),rgba(224,170,255,.8));border:none;color:#fff;font-size:14px;cursor:pointer;transition:all .4s;box-shadow:0 4px 24px rgba(255,107,157,.2);font-weight:300;letter-spacing:1px}
-.guide-close:hover{transform:scale(1.04);box-shadow:0 8px 36px rgba(255,107,157,.35)}
+.guide-close:hover{transform:scale(1.04)}
 .guide-dismiss{display:block;margin-top:12px;font-size:11px;color:rgba(255,228,225,.2);cursor:pointer}
 .guide-dismiss:hover{color:rgba(255,228,225,.4)}
 #flash-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;z-index:8000;opacity:0;pointer-events:none;transition:opacity .2s}
 #flash-overlay.active{opacity:.2}
 </style>
 <script>
-if(location.protocol==='file:'){document.addEventListener('DOMContentLoaded',function(){var ls=document.getElementById('loading-screen');if(ls)ls.innerHTML='<div style="text-align:center;color:#ffe4e1;padding:30px;max-width:520px;"><div style="font-size:48px;margin-bottom:16px;">💫</div><h2 style="font-weight:300;">需要 localhost 打开</h2></div>';});}
+if(location.protocol==='file:'){document.addEventListener('DOMContentLoaded',function(){var ls=document.getElementById('loading-screen');if(ls)ls.innerHTML='<div style="text-align:center;color:#ffe4e1;padding:30px;"><div style="font-size:48px;">💫</div><h2 style="font-weight:300;">需要 localhost 打开</h2></div>';});}
 </script>
 </head>
 <body>
@@ -68,14 +68,13 @@ var CONFIG={
   SMOOTHING_FACTOR:0.10,ROTATION_SENSITIVITY:0.03,OPENNESS_SENSITIVITY:1.0,
   MOUSE_ROTATION_SPEED:0.002,MOUSE_WHEEL_SPEED:0.04,
   SCALE_MIN:0.5,SCALE_MAX:3.0,
-  BLOOM_THRESHOLD:0.2,BLOOM_STRENGTH:1.2,BLOOM_RADIUS:1.0,
+  // Bloom 只做柔边，不负责亮度
+  BLOOM_THRESHOLD:0.65,BLOOM_STRENGTH:0.4,BLOOM_RADIUS:0.4,
   TRANSITION_DURATION:1500,
   BASE_COLOR:'#ff6b9d',PARTICLE_OPACITY:0.55,
   BREATHING_AMPLITUDE:0.08,BREATHING_SPEED:0.3,
   BG_TWINKLE_SPEED:0.8,AUTO_ROTATE_SPEED:0.06,
-  NEBULA_LAYERS:2,
-  // 性能降级阈值
-  PERF_LOW_FPS:25,PERF_CHECK_FRAMES:60,
+  NEBULA_LAYERS:2,PERF_LOW_FPS:25,PERF_CHECK_FRAMES:60,
 };
 if(window.matchMedia('(prefers-reduced-motion:reduce)').matches){CONFIG.TRANSITION_DURATION=0;CONFIG.SMOOTHING_FACTOR=1;CONFIG.BREATHING_AMPLITUDE=0;}
 var IS_MOBILE=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -95,7 +94,7 @@ import{RenderPass}from'three/addons/postprocessing/RenderPass.js';
 import{UnrealBloomPass}from'three/addons/postprocessing/UnrealBloomPass.js';
 
 var FilesetResolver,HandLandmarker;
-try{var mv=await import('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.9/vision_bundle.mjs');FilesetResolver=mv.FilesetResolver;HandLandmarker=mv.HandLandmarker;}catch(e){console.warn('[MP] 不可用');}
+try{var mv=await import('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.9/vision_bundle.mjs');FilesetResolver=mv.FilesetResolver;HandLandmarker=mv.HandLandmarker;}catch(e){}
 
 try{
 if(typeof THREE==='undefined')throw new Error('Three.js 加载失败');
@@ -110,65 +109,58 @@ var mouseState={isDown:false,prevX:0,prevY:0,wheelDelta:0,targetWheel:0};
 var targetRotation={x:0,y:0};
 var currentModel='heart';
 var particleCount=CONFIG.PARTICLE_COUNT_DEFAULT;
-var particlePositions,particleTargets,particleStarts,particleSpeeds,particleSizes;
+var particlePositions,particleTargets,particleStarts,particleSpeeds,particleSizes,particleBrightness;
 var isTransitioning=false,transitionStartTime=0;
 var rotationPaused=false;
 var handLandmarker=null,mpLoadTimer=null,mpVideoStream=null;
-// 性能监控
-var fpsBuffer=[],fpsIdx=0,perfDegraded=false;
+var fpsBuffer=[],perfDegraded=false;
 var currentDPR=Math.min(window.devicePixelRatio,3);
 
 var uniforms={baseColor:{value:new THREE.Color(CONFIG.BASE_COLOR)},time:{value:0},openness:{value:0},particleTexture:{value:null}};
 
-// ===== 工具 =====
 function lerp(a,b,t){return a+(b-a)*t}
 function damp(c,t,l,dt){return lerp(c,t,1-Math.exp(-l*dt))}
 function noise3D(x,y,z){return Math.sin(x*1.27+y*3.71+z*2.53)*.5+Math.sin(x*2.13-y*1.37+z*4.21)*.3+Math.sin(x*.73+y*2.91-z*1.83)*.2}
 function easeOutQuad(t){return 1-(1-t)*(1-t)}
 function easeOutCubic(t){return 1-Math.pow(1-t,3)}
 function easeOutElastic(t){if(t===0||t===1)return t;return Math.pow(2,-10*t)*Math.sin((t-.075)*(2*Math.PI)/.3)*.02+t}
+function crystalTransition(t){if(t<.2)return easeOutQuad(t/.2)*.08;if(t<.8)return .08+easeOutCubic((t-.2)/.6)*.87;var s=(t-.8)/.2;return .95+easeOutElastic(s)*.05;}
 
-// 水晶重组过渡：散开(0-0.3)→吸合(0.3-1.2)→微过冲(1.2-1.5)
-function crystalTransition(t){
-  if(t<.2)return easeOutQuad(t/.2)*.08;
-  if(t<.8)return .08+easeOutCubic((t-.2)/.6)*.87;
-  var s=(t-.8)/.2;return .95+easeOutElastic(s)*.05;
-}
-
-// ===== 八角星光贴图 (512x512 高清) =====
+// ===== 贴图 (512x512 实心核心) =====
 function createParticleTexture(){
   var s=512,c=document.createElement('canvas');c.width=s;c.height=s;
   var ctx=c.getContext('2d'),h=s/2;
-  // 底层大柔光晕
+  // 底层柔光晕
   var g1=ctx.createRadialGradient(h,h,0,h,h,h);
-  g1.addColorStop(0,'rgba(255,230,240,.9)');
-  g1.addColorStop(.15,'rgba(255,200,220,.5)');
-  g1.addColorStop(.4,'rgba(255,180,210,.1)');
-  g1.addColorStop(1,'rgba(255,180,210,0)');
+  g1.addColorStop(0,'rgba(255,240,245,1)');
+  g1.addColorStop(.12,'rgba(255,220,235,.7)');
+  g1.addColorStop(.35,'rgba(255,200,220,.2)');
+  g1.addColorStop(1,'rgba(255,200,220,0)');
   ctx.fillStyle=g1;ctx.fillRect(0,0,s,s);
-  // 中层八角星光
+  // 八角星光
   ctx.globalCompositeOperation='lighter';
-  var rays=8,lengths=[1,.55,1,.55,.75,.75,.75,.75];
+  var rays=8,lengths=[1,.5,1,.5,.7,.7,.7,.7];
   for(var i=0;i<rays;i++){
     var angle=i*Math.PI/4,len=lengths[i]*h*.85;
     var grad=ctx.createLinearGradient(h,h,h+Math.cos(angle)*len,h+Math.sin(angle)*len);
-    grad.addColorStop(0,'rgba(255,245,240,.6)');
-    grad.addColorStop(.35,'rgba(255,230,240,.25)');
+    grad.addColorStop(0,'rgba(255,245,240,.5)');
+    grad.addColorStop(.3,'rgba(255,230,240,.2)');
     grad.addColorStop(1,'rgba(255,230,240,0)');
     ctx.strokeStyle=grad;ctx.lineWidth=0.8;
     ctx.beginPath();ctx.moveTo(h,h);ctx.lineTo(h+Math.cos(angle)*len,h+Math.sin(angle)*len);ctx.stroke();
   }
-  // 顶层纯白核心
-  var g2=ctx.createRadialGradient(h,h,0,h,h,6);
+  // 实心核心（关键：不开 Bloom 也是亮点）
+  var g2=ctx.createRadialGradient(h,h,0,h,h,10);
   g2.addColorStop(0,'rgba(255,255,255,1)');
-  g2.addColorStop(.4,'rgba(255,250,255,.5)');
-  g2.addColorStop(1,'rgba(255,250,255,0)');
-  ctx.fillStyle=g2;ctx.fillRect(h-10,h-10,20,20);
+  g2.addColorStop(.3,'rgba(255,245,250,.9)');
+  g2.addColorStop(.6,'rgba(255,230,240,.4)');
+  g2.addColorStop(1,'rgba(255,230,240,0)');
+  ctx.fillStyle=g2;ctx.fillRect(h-16,h-16,32,32);
   ctx.globalCompositeOperation='source-over';
   uniforms.particleTexture.value=new THREE.CanvasTexture(c);
 }
 
-// ===== 粒子模型 =====
+// ===== 心形（带亮度焦点）=====
 function createParticleModel(m,n){
   var p=new Float32Array(n*3);
   switch(m){
@@ -181,6 +173,7 @@ function createParticleModel(m,n){
 
 function genHeart(p,n){
   if(!particleSizes||particleSizes.length!==n)particleSizes=new Float32Array(n);
+  if(!particleBrightness||particleBrightness.length!==n)particleBrightness=new Float32Array(n);
   for(var i=0;i<n;i++){
     var x,y,z,valid=false;
     while(!valid){
@@ -203,125 +196,113 @@ function genHeart(p,n){
     p[i*3]=x*.22;p[i*3+1]=y*.22;p[i*3+2]=z*.22;
     var distFromCenter=Math.sqrt(x*x+y*y+z*z)/16;
     particleSizes[i]=distFromCenter>.6?1.2+Math.random()*.8:.3+Math.random()*.5;
+    // 亮度焦点：圆弧顶端最亮，底部尖端次之，中心暗
+    var yNorm=y*.22; // 归一化到实际坐标
+    if(yNorm>1.5)particleBrightness[i]=1.5; // 圆弧顶端
+    else if(yNorm<-1.5)particleBrightness[i]=1.3; // 底部尖端
+    else particleBrightness[i]=0.8; // 中心
   }
 }
-function genNebula(p,n){for(var i=0;i<n;i++){var t=Math.random()*Math.PI*2,ph=Math.acos(2*Math.random()-1),r=3+Math.random()*5+noise3D(Math.sin(ph)*Math.cos(t)*2,Math.sin(ph)*Math.sin(t)*2,Math.cos(ph)*2)*2.5;p[i*3]=r*Math.sin(ph)*Math.cos(t);p[i*3+1]=r*Math.sin(ph)*Math.sin(t);p[i*3+2]=r*Math.cos(ph);}}
-function genFirework(p,n){for(var i=0;i<n;i++){var a=i%6,t=(i/n)*3,an=(a/6)*Math.PI*2+t*Math.PI*2,r=t*3.5+Math.random()*.8;p[i*3]=r*Math.cos(an);p[i*3+1]=(Math.random()-.5)*1.5+t*.5;p[i*3+2]=r*Math.sin(an);}}
-function genSaturn(p,n){var cc=Math.floor(n*.35);for(var i=0;i<cc;i++){var t=Math.random()*Math.PI*2,ph=Math.acos(2*Math.random()-1),r=Math.pow(Math.random(),.5)*2.5;p[i*3]=r*Math.sin(ph)*Math.cos(t);p[i*3+1]=r*Math.sin(ph)*Math.sin(t)*.7;p[i*3+2]=r*Math.cos(ph);}for(var i=cc;i<n;i++){var MR=4+Math.random()*3,mR=(Math.random()-.5)*.6,t=Math.random()*Math.PI*2,ph=Math.random()*Math.PI*2,j=i*3;p[j]=(MR+mR*Math.cos(ph))*Math.cos(t);p[j+1]=mR*Math.sin(ph)*.3;p[j+2]=(MR+mR*Math.cos(ph))*Math.sin(t);}}
-function genFlower(p,n){for(var i=0;i<n;i++){var t=(i/n)*Math.PI*2,r=Math.abs(Math.cos(5*t/2))*5+.5;p[i*3]=r*Math.cos(t)+(Math.random()-.5)*.3;p[i*3+1]=(Math.random()-.5)*1.2;p[i*3+2]=r*Math.sin(t)+(Math.random()-.5)*.3;}}
+function genNebula(p,n){
+  if(!particleBrightness||particleBrightness.length!==n)particleBrightness=new Float32Array(n);
+  for(var i=0;i<n;i++){var t=Math.random()*Math.PI*2,ph=Math.acos(2*Math.random()-1),r=3+Math.random()*5+noise3D(Math.sin(ph)*Math.cos(t)*2,Math.sin(ph)*Math.sin(t)*2,Math.cos(ph)*2)*2.5;p[i*3]=r*Math.sin(ph)*Math.cos(t);p[i*3+1]=r*Math.sin(ph)*Math.sin(t);p[i*3+2]=r*Math.cos(ph);particleBrightness[i]=.8+Math.random()*.4;}
+}
+function genFirework(p,n){
+  if(!particleBrightness||particleBrightness.length!==n)particleBrightness=new Float32Array(n);
+  for(var i=0;i<n;i++){var a=i%6,t=(i/n)*3,an=(a/6)*Math.PI*2+t*Math.PI*2,r=t*3.5+Math.random()*.8;p[i*3]=r*Math.cos(an);p[i*3+1]=(Math.random()-.5)*1.5+t*.5;p[i*3+2]=r*Math.sin(an);particleBrightness[i]=.8+Math.random()*.4;}
+}
+function genSaturn(p,n){
+  if(!particleBrightness||particleBrightness.length!==n)particleBrightness=new Float32Array(n);
+  var cc=Math.floor(n*.35);for(var i=0;i<cc;i++){var t=Math.random()*Math.PI*2,ph=Math.acos(2*Math.random()-1),r=Math.pow(Math.random(),.5)*2.5;p[i*3]=r*Math.sin(ph)*Math.cos(t);p[i*3+1]=r*Math.sin(ph)*Math.sin(t)*.7;p[i*3+2]=r*Math.cos(ph);particleBrightness[i]=.8+Math.random()*.4;}for(var i=cc;i<n;i++){var MR=4+Math.random()*3,mR=(Math.random()-.5)*.6,t=Math.random()*Math.PI*2,ph=Math.random()*Math.PI*2,j=i*3;p[j]=(MR+mR*Math.cos(ph))*Math.cos(t);p[j+1]=mR*Math.sin(ph)*.3;p[j+2]=(MR+mR*Math.cos(ph))*Math.sin(t);particleBrightness[i]=.8+Math.random()*.4;}
+}
+function genFlower(p,n){
+  if(!particleBrightness||particleBrightness.length!==n)particleBrightness=new Float32Array(n);
+  for(var i=0;i<n;i++){var t=(i/n)*Math.PI*2,r=Math.abs(Math.cos(5*t/2))*5+.5;p[i*3]=r*Math.cos(t)+(Math.random()-.5)*.3;p[i*3+1]=(Math.random()-.5)*1.2;p[i*3+2]=r*Math.sin(t)+(Math.random()-.5)*.3;particleBrightness[i]=.8+Math.random()*.4;}
+}
 
-// ===== 流星（修复白线 bug）=====
+// ===== 流星 =====
 function createMeteors(){
-  var count=8,maxTrail=15;
-  var totalVerts=count*maxTrail;
+  var count=8,maxTrail=15,totalVerts=count*maxTrail;
   var geo=new THREE.BufferGeometry();
   var pos=new Float32Array(totalVerts*3),col=new Float32Array(totalVerts*3);
-  // 修复：初始化所有 y 为 -1000（视锥外），防止白线
   for(var i=0;i<totalVerts;i++){pos[i*3]=0;pos[i*3+1]=-1000;pos[i*3+2]=0;}
   geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
   geo.setAttribute('color',new THREE.BufferAttribute(col,3));
   geo.setDrawRange(0,0);
-  var mat=new THREE.LineBasicMaterial({vertexColors:true,transparent:true,opacity:.8,blending:THREE.AdditiveBlending,depthWrite:false,color:0x000000});
-  meteorSystem=new THREE.LineSegments(geo,mat);
+  meteorSystem=new THREE.LineSegments(geo,new THREE.LineBasicMaterial({vertexColors:true,transparent:true,opacity:.8,blending:THREE.AdditiveBlending,depthWrite:false,color:0x000000}));
   meteorSystem.userData={count:count,maxTrail:maxTrail,life:new Float32Array(count),head:new Float32Array(count*3),vel:new Float32Array(count*3),trailIdx:new Float32Array(count)};
   scene.add(meteorSystem);
 }
 function updateMeteors(dt){
   if(!meteorSystem||perfDegraded)return;
-  var d=meteorSystem.userData,pos=meteorSystem.geometry.attributes.position.array,col=meteorSystem.geometry.attributes.color.array;
-  var drawCount=0;
+  var d=meteorSystem.userData,pos=meteorSystem.geometry.attributes.position.array,col=meteorSystem.geometry.attributes.color.array,drawCount=0;
   for(var m=0;m<d.count;m++){
     d.life[m]-=dt;
-    if(d.life[m]<=0){
-      if(Math.random()<dt*0.1){
-        d.head[m*3]=(Math.random()-.5)*50;d.head[m*3+1]=20+Math.random()*10;d.head[m*3+2]=(Math.random()-.5)*30-20;
-        d.vel[m*3]=(Math.random()-.5)*15-5;d.vel[m*3+1]=-25-Math.random()*15;d.vel[m*3+2]=(Math.random()-.5)*8;
-        d.life[m]=.8+Math.random()*.6;d.trailIdx[m]=0;
-        // 重置拖尾位置
-        for(var t=0;t<d.maxTrail;t++){var bi=(m*d.maxTrail+t)*3;pos[bi+1]=-1000;}
-      }
-      continue;
-    }
-    d.vel[m*3+1]-=dt*8;
-    d.head[m*3]+=d.vel[m*3]*dt;d.head[m*3+1]+=d.vel[m*3+1]*dt;d.head[m*3+2]+=d.vel[m*3+2]*dt;
-    var ti=Math.floor(d.trailIdx[m])%d.maxTrail;
-    var base=(m*d.maxTrail+ti)*3;
+    if(d.life[m]<=0){if(Math.random()<dt*.1){d.head[m*3]=(Math.random()-.5)*50;d.head[m*3+1]=20+Math.random()*10;d.head[m*3+2]=(Math.random()-.5)*30-20;d.vel[m*3]=(Math.random()-.5)*15-5;d.vel[m*3+1]=-25-Math.random()*15;d.vel[m*3+2]=(Math.random()-.5)*8;d.life[m]=.8+Math.random()*.6;d.trailIdx[m]=0;for(var t=0;t<d.maxTrail;t++){var bi=(m*d.maxTrail+t)*3;pos[bi+1]=-1000;}}}continue;}
+    d.vel[m*3+1]-=dt*8;d.head[m*3]+=d.vel[m*3]*dt;d.head[m*3+1]+=d.vel[m*3+1]*dt;d.head[m*3+2]+=d.vel[m*3+2]*dt;
+    var ti=Math.floor(d.trailIdx[m])%d.maxTrail,base=(m*d.maxTrail+ti)*3;
     pos[base]=d.head[m*3];pos[base+1]=d.head[m*3+1];pos[base+2]=d.head[m*3+2];
-    var lifeFrac=d.life[m]/1.4;
-    col[base]=1;col[base+1]=.84*lifeFrac+.5*(1-lifeFrac);col[base+2]=.1*lifeFrac+.6*(1-lifeFrac);
-    d.trailIdx[m]=(ti+1);
-    var prevIdx=ti;
-    for(var t=0;t<d.maxTrail-1;t++){
-      var curr=prevIdx,prev=(curr-1+d.maxTrail)%d.maxTrail;
-      var cb=(m*d.maxTrail+curr)*3,pb=(m*d.maxTrail+prev)*3;
-      if(pos[pb+1]<-30)break;
-      var fade=1-t/d.maxTrail;
-      var o=drawCount*3;
-      pos[o]=pos[cb];pos[o+1]=pos[cb+1];pos[o+2]=pos[cb+2];
-      pos[o+3]=pos[pb];pos[o+4]=pos[pb+1];pos[o+5]=pos[pb+2];
-      col[o]=col[cb];col[o+1]=col[cb+1];col[o+2]=col[cb+2];
-      col[o+3]=col[pb]*fade;col[o+4]=col[pb+1]*fade;col[o+5]=col[pb+2]*fade;
-      drawCount++;prevIdx=prev;
-    }
+    var lf=d.life[m]/1.4;col[base]=1;col[base+1]=.84*lf+.5*(1-lf);col[base+2]=.1*lf+.6*(1-lf);
+    d.trailIdx[m]=(ti+1);var prevIdx=ti;
+    for(var t=0;t<d.maxTrail-1;t++){var curr=prevIdx,prev=(curr-1+d.maxTrail)%d.maxTrail,cb=(m*d.maxTrail+curr)*3,pb=(m*d.maxTrail+prev)*3;if(pos[pb+1]<-30)break;var fade=1-t/d.maxTrail,o=drawCount*3;pos[o]=pos[cb];pos[o+1]=pos[cb+1];pos[o+2]=pos[cb+2];pos[o+3]=pos[pb];pos[o+4]=pos[pb+1];pos[o+5]=pos[pb+2];col[o]=col[cb];col[o+1]=col[cb+1];col[o+2]=col[cb+2];col[o+3]=col[pb]*fade;col[o+4]=col[pb+1]*fade;col[o+5]=col[pb+2]*fade;drawCount++;prevIdx=prev;}
   }
-  meteorSystem.geometry.setDrawRange(0,drawCount*2);
-  meteorSystem.geometry.attributes.position.needsUpdate=true;
-  meteorSystem.geometry.attributes.color.needsUpdate=true;
+  meteorSystem.geometry.setDrawRange(0,drawCount*2);meteorSystem.geometry.attributes.position.needsUpdate=true;meteorSystem.geometry.attributes.color.needsUpdate=true;
 }
 
-// ===== 星云背景（可见！）=====
+// ===== 星云（更亮，不依赖 Bloom）=====
 function createNebulaPlanes(){
-  var colors=[[.15,.05,.20],[.10,.03,.15],[.20,.08,.25]];
+  var colors=[[.18,.07,.25],[.12,.05,.18],[.22,.10,.28]];
   for(var l=0;l<CONFIG.NEBULA_LAYERS;l++){
     var geo=new THREE.PlaneGeometry(200,200,1,1);
     var mat=new THREE.ShaderMaterial({
-      fog:false, // 不被雾吃掉
+      fog:false,
       uniforms:{time:uniforms.time,layerIdx:{value:l},baseColor:{value:new THREE.Color(colors[l][0],colors[l][1],colors[l][2])}},
       vertexShader:'varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',
       fragmentShader:[
         'uniform float time;uniform float layerIdx;uniform vec3 baseColor;varying vec2 vUv;',
         'float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}',
         'float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x),f.y);}',
-        // 简化 fbm：只循环 2 次
         'float fbm(vec2 p){float v=0.0,a=.5;for(int i=0;i<2;i++){v+=a*noise(p);p*=2.0;a*=.5;}return v;}',
         'void main(){',
         '  vec2 uv=vUv*3.0+layerIdx*1.7;float t=time*.015*(.8+layerIdx*.3);',
         '  float n=fbm(uv+vec2(t,t*.7));',
-        '  float alpha=smoothstep(.2,.7,n)*.22;', // alpha 提高到 0.22
-        '  gl_FragColor=vec4(baseColor,alpha);',
+        '  float alpha=smoothstep(.15,.65,n)*.35;',
+        '  vec3 col=baseColor;',
+        '  col+=baseColor*alpha*.5;', // 自身发光
+        '  gl_FragColor=vec4(col,alpha);',
         '}'
       ].join('\n'),
       transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,side:THREE.DoubleSide,
     });
     var plane=new THREE.Mesh(geo,mat);
-    plane.position.z=-30-l*15; // 移近
-    plane.rotation.x=l*.15;
+    plane.position.z=-30-l*15;plane.rotation.x=l*.15;
     scene.add(plane);nebulaSystems.push(plane);
   }
 }
 
-// ===== 粒子系统（三层叠加）=====
-function makeShader(PS,PO,extra){
+// ===== 粒子 shader 工厂 =====
+function makeShader(PS,PO,brightnessMul,glowBoost){
   return new THREE.ShaderMaterial({
     uniforms:uniforms,
     vertexShader:[
-      'attribute float aSize;attribute float aSpeed;uniform float openness;uniform float time;',
-      'varying float vDist;varying float vAlpha;varying float vPhase;',
+      'attribute float aSize;attribute float aSpeed;attribute float aBrightness;',
+      'uniform float openness;uniform float time;',
+      'varying float vDist;varying float vAlpha;varying float vPhase;varying float vBright;',
       'void main(){',
       '  vec3 pos=position;',
       '  float bt=time*'+CONFIG.BREATHING_SPEED.toFixed(1)+'*aSpeed+aSize*10.0;',
       '  pos+=vec3(sin(bt)*'+CONFIG.BREATHING_AMPLITUDE.toFixed(3)+',cos(bt*.7)*'+CONFIG.BREATHING_AMPLITUDE.toFixed(3)+',sin(bt*1.3)*'+CONFIG.BREATHING_AMPLITUDE.toFixed(3)+');',
       '  float sc=mix('+CONFIG.SCALE_MIN.toFixed(1)+','+CONFIG.SCALE_MAX.toFixed(1)+',openness);pos*=sc;',
       '  vec4 mv=modelViewMatrix*vec4(pos,1.0);',
-      '  vDist=length(position)/6.0;vAlpha=smoothstep(80.0,8.0,-mv.z);vPhase=aSpeed;',
+      '  vDist=length(position)/6.0;vAlpha=smoothstep(80.0,8.0,-mv.z);vPhase=aSpeed;vBright=aBrightness;',
       '  float pulse=.7+.6*(.5+.5*sin(time*aSpeed*1.5));',
-      '  gl_PointSize=max(aSize*'+PS+'*(300.0/-mv.z)*pulse,1.0);',
+      '  gl_PointSize=max(aSize*'+PS+'*(400.0/-mv.z)*pulse,1.0);', // 400 基础更大
       '  gl_Position=projectionMatrix*mv;',
       '}'
     ].join('\n'),
     fragmentShader:[
-      'uniform vec3 baseColor;uniform float time;uniform sampler2D particleTexture;',
-      'varying float vDist;varying float vAlpha;varying float vPhase;',
+      'uniform vec3 baseColor;uniform float time;uniform float openness;uniform sampler2D particleTexture;',
+      'varying float vDist;varying float vAlpha;varying float vPhase;varying float vBright;',
       'void main(){',
       '  vec4 tc=texture2D(particleTexture,gl_PointCoord);if(tc.a<.01)discard;',
       '  float t=time*.04+vPhase*.3;',
@@ -329,10 +310,13 @@ function makeShader(PS,PO,extra){
       '  float drift=.5+.5*sin(t);',
       '  vec3 c=mix(warm,rose,drift*.6);',
       '  c=mix(c,lav,smoothstep(.6,1.,vDist));',
-      '  c=mix(c,vec3(1.,.96,.93),vDist<.3?.25*(1.-vDist/.3):0.);',
-      '  float brightness=1.2-vDist*.4;',
-      '  c*=brightness'+(extra||'')+';',
-      '  c=clamp(c,0.0,1.5);',
+      '  c=mix(c,vec3(1.,.96,.93),vDist<.3?.3*(1.-vDist/.3):0.);',
+      '  float brightness=(1.3-vDist*.4)*vBright'+(brightnessMul?'*'+brightnessMul:'')+';',
+      '  c*=brightness;',
+      '  c=pow(c,vec3(0.85));', // 伽马提亮
+      '  c*=(1.5+openness*0.5);', // 手掌张开更亮
+      +(glowBoost||'')+
+      '  c=clamp(c,0.0,1.8);',
       '  float breathe=.85+.15*sin(time*vPhase*2.);',
       '  gl_FragColor=vec4(c,tc.a*'+PO+'*vAlpha*breathe);',
       '}'
@@ -341,89 +325,110 @@ function makeShader(PS,PO,extra){
   });
 }
 
+// ===== 粒子系统（三层）=====
 function createParticleSystem(count){
-  // 清理旧粒子
   [particleSystem,haloSystem,coreSystem].forEach(function(s){if(s){scene.remove(s);s.geometry.dispose();s.material.dispose();}});
 
   var geo=new THREE.BufferGeometry();
   particlePositions=new Float32Array(count*3);particleTargets=new Float32Array(count*3);particleStarts=new Float32Array(count*3);
   if(!particleSizes||particleSizes.length!==count){particleSizes=new Float32Array(count);for(var i=0;i<count;i++)particleSizes[i]=.5+Math.random();}
+  if(!particleBrightness||particleBrightness.length!==count){particleBrightness=new Float32Array(count);for(var i=0;i<count;i++)particleBrightness[i]=.8+Math.random()*.4;}
   particleSpeeds=new Float32Array(count);for(var i=0;i<count;i++)particleSpeeds[i]=.5+Math.random()*1.5;
   var mp=createParticleModel(currentModel,count);
   particlePositions.set(mp);particleTargets.set(mp);particleStarts.set(mp);
   geo.setAttribute('position',new THREE.BufferAttribute(particlePositions,3));
   geo.setAttribute('aSize',new THREE.BufferAttribute(particleSizes,1));
   geo.setAttribute('aSpeed',new THREE.BufferAttribute(particleSpeeds,1));
+  geo.setAttribute('aBrightness',new THREE.BufferAttribute(particleBrightness,1));
 
   // 中层主粒子
-  particleSystem=new THREE.Points(geo,makeShader(CONFIG.PARTICLE_BASE_SIZE.toFixed(1),CONFIG.PARTICLE_OPACITY.toFixed(2)));
+  particleSystem=new THREE.Points(geo,makeShader(CONFIG.PARTICLE_BASE_SIZE.toFixed(1),CONFIG.PARTICLE_OPACITY.toFixed(2),'1.0'));
   scene.add(particleSystem);
 
-  // 外层光晕 (30% 粒子数，大尺寸低透明度)
-  var haloCount=Math.floor(count*.3);
-  var haloGeo=new THREE.BufferGeometry();
-  var haloPos=new Float32Array(mp.buffer,0,haloCount*3); // 共享位置
-  var haloSizes=new Float32Array(haloCount);
-  var haloSpeeds=new Float32Array(haloCount);
-  for(var i=0;i<haloCount;i++){haloSizes[i]=(particleSizes[i%count]||1)*4;haloSpeeds[i]=.2+Math.random()*.3;}
-  haloGeo.setAttribute('position',new THREE.BufferAttribute(new Float32Array(haloPos),3));
-  haloGeo.setAttribute('aSize',new THREE.BufferAttribute(haloSizes,1));
-  haloGeo.setAttribute('aSpeed',new THREE.BufferAttribute(haloSpeeds,1));
-  haloSystem=new THREE.Points(haloGeo,makeShader((CONFIG.PARTICLE_BASE_SIZE*1.5).toFixed(1),'0.08'));
-  scene.add(haloSystem);
+  // 外层光晕（30%，大尺寸低饱和玫瑰金，固定色不流动）
+  var hc=Math.floor(count*.3);
+  var hGeo=new THREE.BufferGeometry();
+  var hPos=new Float32Array(hc*3),hSizes=new Float32Array(hc),hSpeeds=new Float32Array(hc),hBri=new Float32Array(hc);
+  for(var i=0;i<hc;i++){var idx=i%count;hPos[i*3]=mp[idx*3];hPos[i*3+1]=mp[idx*3+1];hPos[i*3+2]=mp[idx*3+2];hSizes[i]=(particleSizes[idx]||1)*4.5;hSpeeds[i]=.15+Math.random()*.2;hBri[i]=1;}
+  hGeo.setAttribute('position',new THREE.BufferAttribute(hPos,3));
+  hGeo.setAttribute('aSize',new THREE.BufferAttribute(hSizes,1));
+  hGeo.setAttribute('aSpeed',new THREE.BufferAttribute(hSpeeds,1));
+  hGeo.setAttribute('aBrightness',new THREE.BufferAttribute(hBri,1));
+  // 外层专用 shader：固定玫瑰金，不流动
+  var haloMat=new THREE.ShaderMaterial({
+    uniforms:uniforms,
+    vertexShader:[
+      'attribute float aSize;attribute float aSpeed;attribute float aBrightness;uniform float openness;uniform float time;',
+      'varying float vAlpha;',
+      'void main(){',
+      '  vec3 pos=position;',
+      '  float bt=time*0.15*aSpeed+aSize*10.0;pos+=vec3(sin(bt)*0.04,cos(bt*0.7)*0.04,sin(bt*1.3)*0.04);',
+      '  float sc=mix(0.5,3.0,openness);pos*=sc;',
+      '  vec4 mv=modelViewMatrix*vec4(pos,1.0);',
+      '  vAlpha=smoothstep(80.0,8.0,-mv.z);',
+      '  gl_PointSize=max(aSize*4.5*(400.0/-mv.z),1.0);',
+      '  gl_Position=projectionMatrix*mv;',
+      '}'
+    ].join('\n'),
+    fragmentShader:[
+      'uniform sampler2D particleTexture;varying float vAlpha;',
+      'void main(){',
+      '  vec4 tc=texture2D(particleTexture,gl_PointCoord);if(tc.a<.01)discard;',
+      '  vec3 c=vec3(1.0,0.75,0.8);', // 固定玫瑰金
+      '  gl_FragColor=vec4(c,tc.a*0.08*vAlpha);',
+      '}'
+    ].join('\n'),
+    transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,
+  });
+  haloSystem=new THREE.Points(hGeo,haloMat);scene.add(haloSystem);
 
-  // 内层核心 (10% 粒子，高亮度小尺寸)
-  var coreCount=Math.floor(count*.1);
-  var coreGeo=new THREE.BufferGeometry();
-  var corePos=new Float32Array(coreCount*3);
-  var coreSizes=new Float32Array(coreCount);
-  var coreSpeeds=new Float32Array(coreCount);
-  for(var i=0;i<coreCount;i++){
-    var idx=Math.floor(Math.random()*count);
-    corePos[i*3]=mp[idx*3];corePos[i*3+1]=mp[idx*3+1];corePos[i*3+2]=mp[idx*3+2];
-    coreSizes[i]=.3+Math.random()*.3;coreSpeeds[i]=2+Math.random()*2;
-  }
-  coreGeo.setAttribute('position',new THREE.BufferAttribute(corePos,3));
-  coreGeo.setAttribute('aSize',new THREE.BufferAttribute(coreSizes,1));
-  coreGeo.setAttribute('aSpeed',new THREE.BufferAttribute(coreSpeeds,1));
-  coreSystem=new THREE.Points(coreGeo,makeShader('1.0','0.7','*1.5'));
-  scene.add(coreSystem);
+  // 内层核心（10%，极亮钻石点，负责触发 Bloom）
+  var cc=Math.floor(count*.1);
+  var cGeo=new THREE.BufferGeometry();
+  var cPos=new Float32Array(cc*3),cSizes=new Float32Array(cc),cSpeeds=new Float32Array(cc),cBri=new Float32Array(cc);
+  for(var i=0;i<cc;i++){var idx=Math.floor(Math.random()*count);cPos[i*3]=mp[idx*3];cPos[i*3+1]=mp[idx*3+1];cPos[i*3+2]=mp[idx*3+2];cSizes[i]=.3+Math.random()*.3;cSpeeds[i]=2.5+Math.random()*2;cBri[i]=2.0;}
+  cGeo.setAttribute('position',new THREE.BufferAttribute(cPos,3));
+  cGeo.setAttribute('aSize',new THREE.BufferAttribute(cSizes,1));
+  cGeo.setAttribute('aSpeed',new THREE.BufferAttribute(cSpeeds,1));
+  cGeo.setAttribute('aBrightness',new THREE.BufferAttribute(cBri,1));
+  coreSystem=new THREE.Points(cGeo,makeShader('1.0','0.7','2.0'));scene.add(coreSystem);
 }
 
-// ===== 背景星空（暖色+大小分层）=====
+// ===== 背景星星（高亮，不依赖 Bloom）=====
 function createBackgroundStars(){
   if(bgStarSystem){scene.remove(bgStarSystem);bgStarSystem.geometry.dispose();bgStarSystem.material.dispose();}
   var n=CONFIG.BG_STAR_COUNT,geo=new THREE.BufferGeometry();
   var pos=new Float32Array(n*3),col=new Float32Array(n*3),phases=new Float32Array(n),sizes=new Float32Array(n);
   var warmHues=[.08,.05,.95,.1,.0];
   for(var i=0;i<n;i++){
-    pos[i*3]=(Math.random()-.5)*200;pos[i*3+1]=(Math.random()-.5)*200;
-    pos[i*3+2]=CONFIG.BG_STAR_Z_MIN+Math.random()*(CONFIG.BG_STAR_Z_MAX-CONFIG.BG_STAR_Z_MIN);
+    pos[i*3]=(Math.random()-.5)*200;pos[i*3+1]=(Math.random()-.5)*200;pos[i*3+2]=CONFIG.BG_STAR_Z_MIN+Math.random()*(CONFIG.BG_STAR_Z_MAX-CONFIG.BG_STAR_Z_MIN);
     var h=warmHues[Math.floor(Math.random()*warmHues.length)]+Math.random()*.05;
-    var c=new THREE.Color().setHSL(h,.2+Math.random()*.3,.65+Math.random()*.3);
+    var c=new THREE.Color().setHSL(h,.2+Math.random()*.3,.7+Math.random()*.25); // 基础亮度 .7
     col[i*3]=c.r;col[i*3+1]=c.g;col[i*3+2]=c.b;
     var rnd=Math.random();
-    if(rnd<.8){sizes[i]=.8;phases[i]=99;} // 微尘 0.8
-    else if(rnd<.95){sizes[i]=1.8;phases[i]=Math.random()*Math.PI*2;} // 中等 1.8
-    else{sizes[i]=3.0;phases[i]=Math.random()*Math.PI*2;} // 亮星 3.0
+    if(rnd<.8){sizes[i]=.8;phases[i]=99;}
+    else if(rnd<.95){sizes[i]=1.8;phases[i]=Math.random()*Math.PI*2;}
+    else{sizes[i]=3.0;phases[i]=Math.random()*Math.PI*2;}
   }
   geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
   geo.setAttribute('color',new THREE.BufferAttribute(col,3));
   geo.setAttribute('aPhase',new THREE.BufferAttribute(phases,1));
   geo.setAttribute('aSize',new THREE.BufferAttribute(sizes,1));
   var mat=new THREE.ShaderMaterial({
-    uniforms:{time:uniforms.time},
+    uniforms:{time:uniforms.time,brightnessComp:{value:1.0}},
     vertexShader:['attribute float aPhase;attribute float aSize;attribute vec3 color;uniform float time;',
-      'varying vec3 vCol;varying float vBr;',
-      'void main(){vCol=color;',
+      'varying vec3 vCol;varying float vBr;varying float vSz;',
+      'void main(){vCol=color;vSz=aSize;',
       '  float speed=aPhase>50.?.0:aPhase>5.?1.5:0.5;',
-      '  vBr=aPhase>50.?.6:.5+.5*sin(time*speed+aPhase);',
+      '  vBr=aPhase>50.?.7:.5+.5*sin(time*speed+aPhase);', // 基础亮度 .7
       '  vec4 mv=modelViewMatrix*vec4(position,1.0);',
-      '  gl_PointSize=max(aSize*(250.0/-mv.z),0.3);', // 250 提高可见度
+      '  gl_PointSize=max(aSize*(250.0/-mv.z),0.3);',
       '  gl_Position=projectionMatrix*mv;}'].join('\n'),
-    fragmentShader:['varying vec3 vCol;varying float vBr;',
+    fragmentShader:['varying vec3 vCol;varying float vBr;varying float vSz;uniform float brightnessComp;',
       'void main(){float d=length(gl_PointCoord-.5);if(d>.5)discard;',
-      '  float a=(1.0-smoothstep(.1,.5,d))*.35*vBr;gl_FragColor=vec4(vCol,a);}'].join('\n'),
+      '  float a=(1.0-smoothstep(.1,.5,d))*.55*vBr*brightnessComp;', // .55 高透明度
+      '  float extra=vSz>2.5&&vBr>0.8?1.2:1.0;', // 亮星额外加亮
+      '  gl_FragColor=vec4(vCol*extra,a);}'].join('\n'),
     transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,
   });
   bgStarSystem=new THREE.Points(geo,mat);scene.add(bgStarSystem);
@@ -450,7 +455,12 @@ function createGUI(){
   gui.add(p,'model',{'❤️ 爱心':'heart','🌌 星云':'nebula','🎆 烟花':'firework','🪐 土星':'saturn','🌸 花朵':'flower'}).name('✨ 模型').onChange(function(v){switchModel(v);});
   gui.addColor(p,'baseColor').name('🎨 颜色').onChange(function(v){uniforms.baseColor.value.set(v);});
   gui.add(p,'particleCount',CONFIG.PARTICLE_COUNT_MIN,CONFIG.PARTICLE_COUNT_MAX,CONFIG.PARTICLE_COUNT_STEP).name('✨ 密度').onFinishChange(function(v){updateParticleCount(Math.round(v));});
-  gui.add(p,'bloomStrength',0,2,.05).name('💫 辉光').onChange(function(v){bloomPass.strength=v;bloomPass.enabled=v>.01;});
+  // 辉光联动：bloom 越低，背景越亮
+  gui.add(p,'bloomStrength',0,1,.05).name('💫 辉光').onChange(function(v){
+    bloomPass.strength=v;bloomPass.enabled=v>.05;
+    var compensate=1.0+v*0.8; // bloom 越高背景越亮
+    if(bgStarSystem&&bgStarSystem.material.uniforms.brightnessComp)bgStarSystem.material.uniforms.brightnessComp.value=compensate;
+  });
   gui.add(p,'handSensitivity',.5,2,.1).name('🖐️ 灵敏度').onChange(function(v){CONFIG.OPENNESS_SENSITIVITY=v;});
 }
 
@@ -486,7 +496,7 @@ function initHandTracking(){
   .then(function(v){return HandLandmarker.createFromOptions(v,{baseOptions:{modelAssetPath:'hand_landmarker.task',delegate:'GPU'},runningMode:'VIDEO',numHands:1,minHandDetectionConfidence:0.5,minHandPresenceConfidence:0.5,minTrackingConfidence:0.5})
     .catch(function(){return HandLandmarker.createFromOptions(v,{baseOptions:{modelAssetPath:'hand_landmarker.task',delegate:'CPU'},runningMode:'VIDEO',numHands:1,minHandDetectionConfidence:0.5,minHandPresenceConfidence:0.5,minTrackingConfidence:0.5});});
   }).then(function(d){if(!d)throw new Error('null');handLandmarker=d;startCamera();})
-  .catch(function(e){console.error('[Hand]',e);showWebcamError('手部模型加载失败');setTimeout(function(){document.getElementById('webcam-container').style.display='none';},5000);});
+  .catch(function(e){showWebcamError('手部模型加载失败');setTimeout(function(){document.getElementById('webcam-container').style.display='none';},5000);});
 
   function startCamera(){
     if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){showWebcamError('不支持摄像头');return;}
@@ -519,32 +529,16 @@ function onHandUpdate(result){
   }else{handState.detected=false;document.getElementById('hand-status').textContent='未检测';document.getElementById('control-mode').textContent='🖱️';handState.targetOpenness=0;handState.targetDx=0;handState.targetDy=0;}
 }
 
-// 魔法手势（柔光圆点，低分辨率不锯齿）
 function drawHandSkeleton(ctx,lm,w,h){
-  // 极细骨架线
   var cn=[[0,1],[1,2],[2,3],[3,4],[0,5],[5,6],[6,7],[7,8],[0,9],[9,10],[10,11],[11,12],[0,13],[13,14],[14,15],[15,16],[0,17],[17,18],[18,19],[19,20],[5,9],[9,13],[13,17]];
   ctx.strokeStyle='rgba(255,230,200,.1)';ctx.lineWidth=1;
   for(var i=0;i<cn.length;i++){ctx.beginPath();ctx.moveTo(lm[cn[i][0]].x*w,lm[cn[i][0]].y*h);ctx.lineTo(lm[cn[i][1]].x*w,lm[cn[i][1]].y*h);ctx.stroke();}
-  // 指尖：柔光圆点（无多边形）
   var tipIdx=[4,8,12,16,20];
-  for(var t=0;t<tipIdx.length;t++){
-    var x=lm[tipIdx[t]].x*w,y=lm[tipIdx[t]].y*h;
-    ctx.save();ctx.shadowColor='rgba(255,215,0,.6)';ctx.shadowBlur=10;
-    var g=ctx.createRadialGradient(x,y,0,x,y,6);
-    g.addColorStop(0,'rgba(255,215,0,.8)');g.addColorStop(1,'rgba(255,215,0,0)');
-    ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,6,0,Math.PI*2);ctx.fill();
-    ctx.restore();
-  }
-  // 掌心：柔光点
+  for(var t=0;t<tipIdx.length;t++){var x=lm[tipIdx[t]].x*w,y=lm[tipIdx[t]].y*h;ctx.save();ctx.shadowColor='rgba(255,215,0,.6)';ctx.shadowBlur=10;var g=ctx.createRadialGradient(x,y,0,x,y,6);g.addColorStop(0,'rgba(255,215,0,.8)');g.addColorStop(1,'rgba(255,215,0,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,6,0,Math.PI*2);ctx.fill();ctx.restore();}
   var px=(lm[0].x+lm[9].x)/2*w,py=(lm[0].y+lm[9].y)/2*h;
-  ctx.save();ctx.shadowColor='rgba(255,107,157,.5)';ctx.shadowBlur=10;
-  var pg=ctx.createRadialGradient(px,py,0,px,py,14);
-  pg.addColorStop(0,'rgba(255,107,157,.5)');pg.addColorStop(1,'rgba(255,107,157,0)');
-  ctx.fillStyle=pg;ctx.beginPath();ctx.arc(px,py,14,0,Math.PI*2);ctx.fill();
-  ctx.restore();
+  ctx.save();ctx.shadowColor='rgba(255,107,157,.5)';ctx.shadowBlur=10;var pg=ctx.createRadialGradient(px,py,0,px,py,14);pg.addColorStop(0,'rgba(255,107,157,.5)');pg.addColorStop(1,'rgba(255,107,157,0)');ctx.fillStyle=pg;ctx.beginPath();ctx.arc(px,py,14,0,Math.PI*2);ctx.fill();ctx.restore();
 }
 
-// ===== 摄像头拖拽 =====
 function initWebcamDrag(){
   var ct=document.getElementById('webcam-container'),dragging=false,sx,sy,sl,sb;
   function start(x,y){dragging=true;sx=x;sy=y;var r=ct.getBoundingClientRect();sl=r.left;sb=window.innerHeight-r.bottom;}
@@ -559,7 +553,6 @@ function initWebcamDrag(){
 
 function toggleFullscreen(){if(!document.fullscreenElement)document.documentElement.requestFullscreen().catch(function(){});else document.exitFullscreen().catch(function(){});}
 function takeScreenshot(){var fl=document.getElementById('flash-overlay');fl.classList.add('active');setTimeout(function(){fl.classList.remove('active');},200);composer.render();renderer.domElement.toBlob(function(b){if(!b)return;var u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='star-'+currentModel+'.png';a.click();URL.revokeObjectURL(u);},'image/png');}
-
 function onResize(){var w=window.innerWidth,h=window.innerHeight;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h);composer.setSize(w,h);if(bloomPass&&bloomPass.resolution)bloomPass.resolution.set(w,h);}
 
 // ===== 主循环 =====
@@ -569,20 +562,11 @@ function animate(){
   var dt=clock.getDelta(),elapsed=clock.getElapsedTime();
   uniforms.time.value=elapsed;
 
-  // 性能监控：连续 60 帧低于 25fps 则降级
   fpsBuffer.push(dt);if(fpsBuffer.length>CONFIG.PERF_CHECK_FRAMES)fpsBuffer.shift();
   if(!perfDegraded&&fpsBuffer.length>=CONFIG.PERF_CHECK_FRAMES){
     var avgDt=fpsBuffer.reduce(function(a,b){return a+b;},0)/fpsBuffer.length;
-    if(1/avgDt<CONFIG.PERF_LOW_FPS){
-      perfDegraded=true;
-      if(meteorSystem)meteorSystem.visible=false;
-      nebulaSystems.forEach(function(n){n.visible=false;});
-      if(particleCount>4000)updateParticleCount(Math.floor(particleCount/2));
-      console.warn('[Perf] 降级：关闭流星/星云，粒子减半');
-    }
+    if(1/avgDt<CONFIG.PERF_LOW_FPS){perfDegraded=true;if(meteorSystem)meteorSystem.visible=false;nebulaSystems.forEach(function(n){n.visible=false;});if(particleCount>4000)updateParticleCount(Math.floor(particleCount/2));}
   }
-
-  // DPR 自适应（连续低帧率降级）
   if(perfDegraded&&currentDPR>2){currentDPR=2;renderer.setPixelRatio(currentDPR);}
 
   var ls=CONFIG.SMOOTHING_FACTOR*60;
@@ -594,27 +578,19 @@ function animate(){
 
   if(!rotationPaused&&handState.detected){targetRotation.y+=handState.dx*CONFIG.ROTATION_SENSITIVITY;targetRotation.x+=handState.dy*CONFIG.ROTATION_SENSITIVITY;}
 
-  // 水晶重组过渡（全量，无分批）
   if(isTransitioning){
     var t=Math.min(1,(elapsed-transitionStartTime)/(CONFIG.TRANSITION_DURATION/1000));
     var e=crystalTransition(t);
     for(var i=0;i<particleCount;i++){var j=i*3;particlePositions[j]=lerp(particleStarts[j],particleTargets[j],e);particlePositions[j+1]=lerp(particleStarts[j+1],particleTargets[j+1],e);particlePositions[j+2]=lerp(particleStarts[j+2],particleTargets[j+2],e);}
     if(t>=1){isTransitioning=false;particlePositions.set(particleTargets);}
     particleSystem.geometry.attributes.position.needsUpdate=true;
-    // 同步外层光晕位置
-    if(haloSystem){
-      var hp=haloSystem.geometry.attributes.position.array;
-      for(var i=0;i<hp.length/3;i++){var idx=(i%particleCount)*3;hp[i*3]=particlePositions[idx];hp[i*3+1]=particlePositions[idx+1];hp[i*3+2]=particlePositions[idx+2];}
-      haloSystem.geometry.attributes.position.needsUpdate=true;
-    }
+    if(haloSystem){var hp=haloSystem.geometry.attributes.position.array;for(var i=0;i<hp.length/3;i++){var idx=(i%particleCount)*3;hp[i*3]=particlePositions[idx];hp[i*3+1]=particlePositions[idx+1];hp[i*3+2]=particlePositions[idx+2];}haloSystem.geometry.attributes.position.needsUpdate=true;}
   }
 
-  // 温柔自转
   if(particleSystem){
     if(!handState.detected&&!mouseState.isDown)targetRotation.y+=dt*CONFIG.AUTO_ROTATE_SPEED;
     particleSystem.rotation.x=damp(particleSystem.rotation.x,targetRotation.x,3,dt);
     particleSystem.rotation.y=damp(particleSystem.rotation.y,targetRotation.y,3,dt);
-    // 外层/内层跟随旋转
     if(haloSystem){haloSystem.rotation.x=particleSystem.rotation.x;haloSystem.rotation.y=particleSystem.rotation.y;}
     if(coreSystem){coreSystem.rotation.x=particleSystem.rotation.x;coreSystem.rotation.y=particleSystem.rotation.y;}
   }
@@ -628,11 +604,12 @@ function animate(){
 // ===== 初始化 =====
 function init(){
   setLoadProgress('创建渲染器...');
-  scene=new THREE.Scene();scene.fog=new THREE.FogExp2(0x0d0218,.003); // 雾密度降低
+  scene=new THREE.Scene();
+  scene.background=new THREE.Color(0x0a0014); // 深紫背景
+  scene.fog=new THREE.FogExp2(0x0a0014,.003);
   camera=new THREE.PerspectiveCamera(60,window.innerWidth/window.innerHeight,.1,500);camera.position.set(0,0,18);
   renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});
-  renderer.setSize(window.innerWidth,window.innerHeight);
-  renderer.setPixelRatio(currentDPR); // 使用自适应 DPR
+  renderer.setSize(window.innerWidth,window.innerHeight);renderer.setPixelRatio(currentDPR);
   renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.3;
   document.getElementById('canvas-container').appendChild(renderer.domElement);
 
@@ -646,7 +623,7 @@ function init(){
 
   if(typeof lil!=='undefined')createGUI();
   initMouseInteraction();initKeyboard();
-  try{initHandTracking();}catch(e){console.warn('手部追踪跳过:',e);document.getElementById('webcam-container').style.display='none';}
+  try{initHandTracking();}catch(e){document.getElementById('webcam-container').style.display='none';}
   initWebcamDrag();
 
   window.addEventListener('resize',onResize);
