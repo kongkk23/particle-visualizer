@@ -317,17 +317,16 @@ function makeShader(PS,PO,brightnessMul,glowBoost){
       '  vec3 c=mix(warm,rose,drift*.6);',
       '  c=mix(c,lav,smoothstep(.6,1.,vDist));',
       '  c=mix(c,vec3(1.,.96,.93),vDist<.3?.3*(1.-vDist/.3):0.);',
-      '  float brightness=(1.0-vDist*.3)*vBright'+(brightnessMul?'*'+brightnessMul:'')+';',
+      '  float brightness=(0.8-vDist*.2)*vBright'+(brightnessMul?'*'+brightnessMul:'')+';',
       '  c*=brightness;',
-      '  c=pow(c,vec3(0.95));', // 轻微伽马
-      '  c*=(1.0+openness*0.3);', // 轻微亮度联动
+      '  c*=(1.0+openness*0.2);',
       +(glowBoost||'')+
       '  c=clamp(c,0.0,1.8);',
-      '  float breathe=.9+.1*sin(time*vPhase*2.);',
+      '  float breathe=.95+.05*sin(time*vPhase*2.);',
       '  gl_FragColor=vec4(c,tc.a*'+PO+'*vAlpha*breathe);',
       '}'
     ].join('\n'),
-    transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,
+    transparent:true,depthWrite:false,blending:THREE.NormalBlending,
   });
 }
 
@@ -432,7 +431,7 @@ function createBackgroundStars(){
       '  gl_Position=projectionMatrix*mv;}'].join('\n'),
     fragmentShader:['varying vec3 vCol;varying float vBr;varying float vSz;uniform float brightnessComp;',
       'void main(){float d=length(gl_PointCoord-.5);if(d>.5)discard;',
-      '  float a=(1.0-smoothstep(.1,.5,d))*.55*vBr*brightnessComp;', // .55 高透明度
+      '  float a=(1.0-smoothstep(.1,.5,d))*.3*vBr*brightnessComp;',
       '  float extra=vSz>2.5&&vBr>0.8?1.2:1.0;', // 亮星额外加亮
       '  gl_FragColor=vec4(vCol*extra,a);}'].join('\n'),
     transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,
