@@ -93,17 +93,16 @@ import{EffectComposer}from'three/addons/postprocessing/EffectComposer.js';
 import{RenderPass}from'three/addons/postprocessing/RenderPass.js';
 import{UnrealBloomPass}from'three/addons/postprocessing/UnrealBloomPass.js';
 
-var FilesetResolver,HandLandmarker;
-try{
-  var mv=await Promise.race([
+// tasks-vision 延迟加载，不阻塞主流程
+var FilesetResolver=null,HandLandmarker=null;
+function loadTasksVision(){
+  return Promise.race([
     import('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.9/vision_bundle.mjs'),
-    new Promise(function(_,rej){setTimeout(function(){rej(new Error('tasks-vision 超时'));},8000);})
-  ]);
-  FilesetResolver=mv.FilesetResolver;HandLandmarker=mv.HandLandmarker;
-  console.log('[MP] tasks-vision OK');
-}catch(e){console.warn('[MP] 不可用:',e.message);}
+    new Promise(function(_,rej){setTimeout(function(){rej(new Error('超时'));},10000);})
+  ]).then(function(mv){FilesetResolver=mv.FilesetResolver;HandLandmarker=mv.HandLandmarker;console.log('[MP] OK');})
+  .catch(function(e){console.warn('[MP] 不可用:',e.message);return null;});
+}
 
-try{
 if(typeof THREE==='undefined')throw new Error('Three.js 加载失败');
 
 var scene,camera,renderer,composer,bloomPass;
@@ -245,7 +244,7 @@ function updateMeteors(dt){
   var d=meteorSystem.userData,pos=meteorSystem.geometry.attributes.position.array,col=meteorSystem.geometry.attributes.color.array,drawCount=0;
   for(var m=0;m<d.count;m++){
     d.life[m]-=dt;
-    if(d.life[m]<=0){if(Math.random()<dt*.1){d.head[m*3]=(Math.random()-.5)*50;d.head[m*3+1]=20+Math.random()*10;d.head[m*3+2]=(Math.random()-.5)*30-20;d.vel[m*3]=(Math.random()-.5)*15-5;d.vel[m*3+1]=-25-Math.random()*15;d.vel[m*3+2]=(Math.random()-.5)*8;d.life[m]=.8+Math.random()*.6;d.trailIdx[m]=0;for(var t=0;t<d.maxTrail;t++){var bi=(m*d.maxTrail+t)*3;pos[bi+1]=-1000;}}}continue;}
+    if(d.life[m]<=0){if(Math.random()<dt*.1){d.head[m*3]=(Math.random()-.5)*50;d.head[m*3+1]=20+Math.random()*10;d.head[m*3+2]=(Math.random()-.5)*30-20;d.vel[m*3]=(Math.random()-.5)*15-5;d.vel[m*3+1]=-25-Math.random()*15;d.vel[m*3+2]=(Math.random()-.5)*8;d.life[m]=.8+Math.random()*.6;d.trailIdx[m]=0;for(var t=0;t<d.maxTrail;t++){var bi=(m*d.maxTrail+t)*3;pos[bi+1]=-1000;}}}continue;
     d.vel[m*3+1]-=dt*8;d.head[m*3]+=d.vel[m*3]*dt;d.head[m*3+1]+=d.vel[m*3+1]*dt;d.head[m*3+2]+=d.vel[m*3+2]*dt;
     var ti=Math.floor(d.trailIdx[m])%d.maxTrail,base=(m*d.maxTrail+ti)*3;
     pos[base]=d.head[m*3];pos[base+1]=d.head[m*3+1];pos[base+2]=d.head[m*3+2];
@@ -495,29 +494,60 @@ function initKeyboard(){
 }
 
 // ===== 手部追踪 =====
-function initHandTracking(){
-  var videoEl=document.getElementById('webcam-video'),overlayEl=document.getElementById('webcam-overlay'),statusEl=document.getElementById('hand-status');
-  if(!FilesetResolver||!HandLandmarker){showWebcamError('手部模型不可用');setTimeout(function(){document.getElementById('webcam-container').style.display='none';},3000);return;}
+async function initHandTracking(){
+  var videoEl=document.getElementById('webcam-video');
+  var overlayEl=document.getElementById('webcam-overlay');
+  var statusEl=document.getElementById('hand-status');
   setLoadProgress('加载 MediaPipe...');
-  FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.9/wasm')
-  .then(function(v){return HandLandmarker.createFromOptions(v,{baseOptions:{modelAssetPath:'hand_landmarker.task',delegate:'GPU'},runningMode:'VIDEO',numHands:1,minHandDetectionConfidence:0.5,minHandPresenceConfidence:0.5,minTrackingConfidence:0.5})
-    .catch(function(){return HandLandmarker.createFromOptions(v,{baseOptions:{modelAssetPath:'hand_landmarker.task',delegate:'CPU'},runningMode:'VIDEO',numHands:1,minHandDetectionConfidence:0.5,minHandPresenceConfidence:0.5,minTrackingConfidence:0.5});});
-  }).then(function(d){if(!d)throw new Error('null');handLandmarker=d;startCamera();})
-  .catch(function(e){showWebcamError('手部模型加载失败');setTimeout(function(){document.getElementById('webcam-container').style.display='none';},5000);});
 
-  function startCamera(){
-    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){showWebcamError('不支持摄像头');return;}
-    try{if(mpVideoStream){mpVideoStream.getTracks().forEach(function(t){t.stop();});mpVideoStream=null;}}catch(e){}
-    navigator.mediaDevices.getUserMedia({video:{width:{ideal:640},height:{ideal:480},facingMode:'user'}})
-    .then(function(s){mpVideoStream=s;videoEl.srcObject=s;videoEl.onloadedmetadata=function(){videoEl.play();overlayEl.classList.add('hidden');var hc=document.getElementById('hand-canvas');hc.width=videoEl.videoWidth;hc.height=videoEl.videoHeight;startLoop();};})
-    .catch(function(e){var m='无法访问摄像头';if(e.name==='NotAllowedError')m='权限被拒绝';showWebcamError(m);});
+  // 加载 tasks-vision（如果还没加载）
+  if(!FilesetResolver){await loadTasksVision();}
+  if(!FilesetResolver||!HandLandmarker){
+    showWebcamError('手部模型不可用');
+    setTimeout(function(){document.getElementById('webcam-container').style.display='none';},3000);
+    return;
   }
-  var firstOK=false;
-  function startLoop(){
-    mpLoadTimer=setTimeout(function(){if(!firstOK)statusEl.textContent='加载超时';},15000);
-    function f(){if(!handLandmarker||!videoEl||videoEl.readyState<2){requestAnimationFrame(f);return;}
-      try{var r=handLandmarker.detectForVideo(videoEl,performance.now());if(!firstOK&&r.landmarks&&r.landmarks.length>0){firstOK=true;if(mpLoadTimer)clearTimeout(mpLoadTimer);}onHandUpdate(r);}catch(e){}requestAnimationFrame(f);}
-    requestAnimationFrame(f);
+
+  // 创建检测器（GPU 优先，失败降级 CPU）
+  setLoadProgress('创建检测器...');
+  try{
+    var vision=await FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.9/wasm');
+    try{
+      handLandmarker=await HandLandmarker.createFromOptions(vision,{baseOptions:{modelAssetPath:'hand_landmarker.task',delegate:'GPU'},runningMode:'VIDEO',numHands:1,minHandDetectionConfidence:0.5,minHandPresenceConfidence:0.5,minTrackingConfidence:0.5});
+    }catch(gpuErr){
+      handLandmarker=await HandLandmarker.createFromOptions(vision,{baseOptions:{modelAssetPath:'hand_landmarker.task',delegate:'CPU'},runningMode:'VIDEO',numHands:1,minHandDetectionConfidence:0.5,minHandPresenceConfidence:0.5,minTrackingConfidence:0.5});
+    }
+  }catch(err){
+    console.error('[Hand]',err);
+    showWebcamError('手部模型加载失败');
+    setTimeout(function(){document.getElementById('webcam-container').style.display='none';},5000);
+    return;
+  }
+
+  // 启动摄像头
+  setLoadProgress('启动摄像头...');
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){showWebcamError('不支持摄像头');return;}
+  try{if(mpVideoStream){mpVideoStream.getTracks().forEach(function(t){t.stop();});mpVideoStream=null;}}catch(e){}
+  try{
+    var stream=await navigator.mediaDevices.getUserMedia({video:{width:{ideal:640},height:{ideal:480},facingMode:'user'}});
+    mpVideoStream=stream;videoEl.srcObject=stream;
+    videoEl.onloadedmetadata=function(){
+      videoEl.play();overlayEl.classList.add('hidden');
+      var hc=document.getElementById('hand-canvas');hc.width=videoEl.videoWidth;hc.height=videoEl.videoHeight;
+      // 开始检测循环
+      var firstOK=false;
+      mpLoadTimer=setTimeout(function(){if(!firstOK)statusEl.textContent='加载超时';},15000);
+      (function loop(){
+        if(!handLandmarker||!videoEl||videoEl.readyState<2){requestAnimationFrame(loop);return;}
+        try{var r=handLandmarker.detectForVideo(videoEl,performance.now());if(!firstOK&&r.landmarks&&r.landmarks.length>0){firstOK=true;if(mpLoadTimer)clearTimeout(mpLoadTimer);}onHandUpdate(r);}catch(e){}
+        requestAnimationFrame(loop);
+      })();
+    };
+  }catch(err){
+    var msg='无法访问摄像头';
+    if(err.name==='NotAllowedError')msg='权限被拒绝';
+    if(err.name==='NotFoundError')msg='未找到摄像头';
+    showWebcamError(msg);
   }
 }
 function showWebcamError(m){var el=document.getElementById('webcam-overlay');el.classList.add('error');el.innerHTML='<div><div class="icon">⚠️</div><div>'+m+'</div></div>';}
@@ -645,9 +675,8 @@ function init(){
   setTimeout(function(){document.getElementById('loading-screen').classList.add('fade-out');},400);
 }
 
-init();animate();
+try{init();animate();}catch(err){
 
-}catch(err){
   console.error('初始化异常:',err);
   var ls=document.getElementById('loading-screen');
   if(ls)ls.innerHTML='<div style="text-align:center;color:#ffe4e1;padding:20px;"><div style="font-size:48px;">💫</div><h2 style="font-weight:300;">加载出了点问题</h2><p style="color:rgba(255,228,225,.4);font-size:13px;">'+(err.message||err)+'</p><button onclick="location.reload()" style="margin-top:16px;padding:10px 28px;border-radius:24px;background:linear-gradient(135deg,#ff6b9d,#e0aaff);border:none;color:#fff;cursor:pointer;">重试</button></div>';
